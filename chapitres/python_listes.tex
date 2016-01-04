@@ -1,0 +1,335 @@
+% !TEX root = ../memo/python_memo.tex
+% !TEX encoding = UTF-8 Unicode
+% creation: 2015-12-09
+
+\chapter{Listes}
+\label{python:listes}
+
+\section{Définition}
+Les \textit{listes} sont des séquences d'objets (\cad{} des nombres, chaînes ou des choses plus complexes définies par l'utilisateur, nous aurons l'occasion d'y revenir). Tous les objets d'une même liste ne doivent pas être forcément du même type\footnote{Dans d'autres langages, on appellera ce type d'objets des \textit{tableaux} en ce sens qu'on peut accéder à leur contenu par index. Les \textit{listes} seront réservées à des ensembles d'objets en séquences mais sans accès possible par index}.
+
+On déclare une liste en utilisant des crochets (\texttt{[ ]}) et en séparant ses éléments par une virgule (\texttt{,}).
+\begin{pythoncode}
+mes_entiers = [2, 3, 4, 6, 8, 9]             # liste d'entiers
+mes_reels = [2.3, 9.7, 4.5, 7.92, 0.002]     # liste de réels
+mes_chaines = ["blue", "blanc", "rouge"]     # liste de chaînes de caractères
+pandora_box = [2, "red", 7.89, mes_entiers]  # liste d'objets de différents types
+\end{pythoncode}
+On a deux manières de créer une liste vide~: une paire de crochets vide ou l'instruction \motcle{liste}.
+\begin{pythoncode}
+vide1 = list()
+vide2 = []
+\end{pythoncode}
+
+\section{Utilisation}
+\subsection{Accès et affichage}
+ Le mot \textit{séquence} dans la définition du concept de liste implique que les objets ont un certain ordre dans la liste et la place de chaque élément est repérée par un \textit{index}.
+
+ \begin{remarque}
+  Attention~: les index commencent à zéro (0) !\!!\!!
+
+  Cela signifie que le premier élément de la liste a l'index 0, le deuxième l'index 1 et ainsi de suite.
+  \end{remarque}
+
+ Pour accéder un élément dans une liste, on se réfère à son index en respectant la syntaxe
+ \texttt{liste[index]}.
+ \begin{pythoncode}
+ >>> liste = ["blue", "blanc", "rouge"]
+>>> print liste[0]
+blue
+>>> print liste[2]
+rouge
+ \end{pythoncode}
+Attention, si l'index fourni ne correspond pas à un élément de la liste, alors Python renvoie une erreur \texttt{\itshape list index out of range}.
+\begin{pythoncode}
+>>> print liste[20]
+Traceback (most recent call last):
+  File " <stdin> ", line 1, in <module>
+IndexError: list index out of range
+ \end{pythoncode}
+
+On peut utiliser des index négatifs pour parcourir une liste en commençant par la fin~:
+\begin{pythoncode}
+>>> liste = ["bleu", "blanc", "rouge", "vert", "jaune", "orange"]
+>>> print liste[-1]
+orange
+>>> print liste[-2]
+jaune
+ \end{pythoncode}
+
+Pour afficher une liste dans son entier, on utilise la fonction \texttt{print} sur la liste elle même. Elle renvoie l'objet liste tel qu'on l'aurait déclaré et ce type d'affichage n'est pas toujours adapté\dots
+
+\begin{pythoncode}
+>>> bazard = [2, "red", 5.67, liste]         # une liste hétéroclite !
+>>> print bazard
+[2, 'red', 5.67, ['blue', 'blanc', 'rouge']]
+\end{pythoncode}
+
+On peut aussi accéder à une partie de la liste seulement~:
+
+\begin{pythoncode}
+>>> liste = ["bleu", "blanc", "rouge", "vert", "jaune", "orange"]
+>>> print liste[2:4]       # du 3e (index 2) au 4e (index 4 non compris)
+['rouge', 'vert']
+>>> print liste[3:]        # du 4e a la fin
+['vert', 'jaune', 'orange']
+>>> print liste[:4]        # du début au 4e
+['bleu', 'blanc', 'rouge', 'vert']
+\end{pythoncode}
+
+
+Enfin, on peut accéder par une affectation multiple aux différents éléments d'une liste~:
+\begin{pythoncode}
+>>> point = [4, 8]
+>>> x, y = point
+>>> print "Abscisse : {}; Ordonnée : {}".format(x, y)
+Abscisse : 4; Ordonnée : 8
+\end{pythoncode}
+
+On peut connaître la longueur d'une liste en utilisant l'instruction \motcle{len} qui renvoie un entier correspondant au nombre d'éléments dans la liste passée en argument.
+
+\begin{pythoncode}
+>>> liste = [1, 2, 3, 4, 5, 6, 7, 8]
+>>> print len(liste)
+8
+\end{pythoncode}
+
+
+
+\subsection{Mutation}
+En Python, les listes sont des objets \textit{mutables}. Cela signifie que l'on peut changer la valeur des éléments d'une liste sans que cela entraîne la création d'une nouvelle liste.
+
+Pour changer la valeur d'un élément d'une liste, on fait une affectation en bonne et due forme~:
+\begin{pythoncode}
+>>> liste =['bleu', 'blanc', 'rouge']
+>>> print id(liste)
+4373329824                           # identification de la liste
+>>> liste[0] = 'vert'                # on change le premier élément de la liste
+>>> print liste
+['vert', 'blanc', 'rouge']
+>>> print id(liste)
+4373329824                           # la liste a la même identification
+\end{pythoncode}
+
+
+En python les listes n'ont pas de longueur fixe. On peut ajouter un élément à une liste ou en insérer.
+
+Pour ajouter un élément à une liste existante, on utilise la fonction \motcle{append} qui ajoute un élément à la fin dune liste.
+\begin{pythoncode}
+>>> print liste
+['vert', 'blanc', 'rouge']
+>>> liste.append('noir')
+>>> print liste
+['vert', 'blanc', 'rouge', 'noir']
+\end{pythoncode}
+
+\begin{exercice}
+\label{python:listes:exos:images}
+Soit une fonction $f$ définie sur $\RR$ par $f(x) = 2x^2-3x+1$. On souhaite dresser un tableau
+des images par cette fonction $f$ de toutes les valeurs entières de l'intervalle $\intf{-3}{6}$.
+\begin{enumerate}
+	\item Écrire la fonction \texttt{f(x)} qui renvoie les valeurs de $f(x)$ en fonction de celle de $x$.
+\item Écrire le code qui permette d'avoir les images souhaitées dans une liste \texttt{images}.
+
+On pourra utiliser une boucle \texttt{for} ainsi que la fonction \texttt{append()}.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}
+Reprendre l'exercice \ref{python:conditions:exos:decompopremiers} page \pageref{python:conditions:exos:decompopremiers} mais mettre les facteurs premiers dans une liste \texttt{facteurs} et les exposants
+correspodant dans une autre liste  \texttt{exposants}.
+\end{exercice}
+
+Pour insérer un objet dans une liste étant donnée son index (et pas sa position~!), on utilise la fonction \motcle{insert}. Elle prend deux arguments, l'index de l'élément et l'objet à insérer. Par exemple si je souhaite insérer \texttt{'rose'} en 3\ieme{} position dans la liste, je tape \texttt{liste.insert(2, 'rose')} (index 2 = 3\ieme{} position).
+\begin{pythoncode}
+>>> print liste
+['vert', 'blanc', 'rouge', 'noir']
+>>> liste.insert(2,'rose')
+>>> print liste
+['vert', 'blanc', 'rose', 'rouge', 'noir']
+\end{pythoncode}
+
+
+Pour supprimer un élément dans une liste j'ai plusieurs solutions. La première consiste à utiliser la commande \motcle{del} (ce n'est pas une fonction mais bien une commande). Pour supprimer le deuxième élément de la liste je tape \texttt{del liste[1]}.
+
+\begin{pythoncode}
+>>> print liste
+['vert', 'blanc', 'rose', 'rouge', 'noir']
+>>> del liste[1]
+>>> print liste
+['vert', 'rose', 'rouge', 'noir']
+\end{pythoncode}
+
+On peut aussi utiliser la fonction \motcle{remove}. Elle prend en argument un objet à retirer de la  liste. Si elle trouve l'objet, elle retire sa première occurrence. Si elle ne le trouve pas, elle renvoie une erreur.
+
+\begin{pythoncode}
+>>> print liste
+['vert', 'rose', 'rouge', 'noir', 'rose']
+>>> liste.remove('rose')
+>>> print liste
+['vert', 'rouge', 'noir', 'rose']
+>>> liste.remove('marron')
+Traceback (most recent call last):
+  File " <stdin> ", line 1, in <module>
+ValueError: list.remove(x): x not in list
+\end{pythoncode}
+
+
+\section{Parcourir une liste}
+Pour parcourir une liste, j'utilise l'instruction \texttt{for} comme indiqué ci-dessous~:
+\begin{pythoncode}
+>>> print liste
+['vert', 'rouge', 'noir', 'rose']
+>>> for elt in liste:
+...    print elt
+...
+vert
+rouge
+noir
+rose
+\end{pythoncode}
+On peut interpréter la ligne 3 comme \og Pour chaque élément \texttt{elt} de la liste \texttt{liste} faire\dots \fg{} et tout ce qui est compris dans le bloc d'instructions après les deux points (\texttt{:}) est exécuté autant de fois qu'il y a d'éléments dans la liste \texttt{liste}.
+
+On peut récupérer l'index de l'élément courant en insérant une deuxième variable (en première position) entre le \texttt{for} et le \texttt{in}~ et en utilisant la fonction \motcle{enumerate}:
+\begin{pythoncode}
+>>> print liste
+['vert', 'rouge', 'noir', 'rose']
+>>> for index, elt in enumerate(liste):
+...    print "L'élément '{0:5s}' a pour index {1:1d}.".format(elt, index)
+...
+L'élément 'vert ' a pour index 0.
+L'élément 'rouge' a pour index 1.
+L'élément 'noir ' a pour index 2.
+L'élément 'rose ' a pour index 3.
+\end{pythoncode}
+
+
+\paragraph{Remarque}
+% L'instruction \texttt{for} est en fait une autre manière de faire une boucle. On l'utilisera dans le cas où la boucle est dédiée à une liste comme précédemment ou dans le cas où l'on veut exécuter une série d'instructions un nombre de fois connu à l'avance.
+
+% \begin{pythoncode}
+% >>> for i in range(1,11):
+% ...    print "{0:2d} x 23 = {1:3d}".format(i, i * 23)
+% ...
+%  1 x 23 =  23
+%  2 x 23 =  46
+%  3 x 23 =  69
+%  4 x 23 =  92
+%  5 x 23 = 115
+%  6 x 23 = 138
+%  7 x 23 = 161
+%  8 x 23 = 184
+%  9 x 23 = 207
+% 10 x 23 = 230
+% \end{pythoncode}
+\begin{remarque}
+Noter la fonction \texttt{range()} (utilisé avec les boucles \texttt{for} -- voir section
+\ref{python:conditions:instructions:for} page \pageref{python:conditions:instructions:for})
+retourne une liste.
+\begin{pythoncode}
+>>> impairs = range(1, 20, 2)
+>>> print impairs
+[1, 3, 5, 7, 9, 11, 13, 15, 17, 19]
+\end{pythoncode}
+\end{remarque}
+
+
+\section{Liste en compréhension}
+Python accepte un mode de construction de listes très facile, très lisible\footnote{très \textit{pythonesque}} et très efficace (en terme de temps d'exécution) dit \textit{liste en comprehension}. L'idée est de décrire la liste à construire en ``filtrant'' une autre liste. Pour cela on utilise l'instruction \texttt{for}.
+
+\begin{pythoncode}
+>>> puissances_de_2 = [2**k for k in range (10)]
+>>> print puissances_de_2
+[1, 2, 4, 8, 16, 32, 64, 128, 256, 512]
+\end{pythoncode}
+
+
+On peut éventuellement utiliser des conditions. Voici une première façon de construire une liste des nombres pairs strictement inférieurs à 20.
+
+\begin{pythoncode}
+>>> pairs = [nb for nb in range (0, 20, 2)]
+>>> print pairs
+[0, 2, 4, 6, 8, 10, 12, 14, 16, 18]
+\end{pythoncode}
+
+
+En utilisant une condition adjointe dans la définition de la liste, on aurait pu obtenir la liste des nombres entiers pairs inférieur à 20  de cette manière~:
+
+\begin{pythoncode}
+>>> pairs2 = [nb for nb in range(20) if (nb % 2 == 0)]
+>>> print pairs2
+[0, 2, 4, 6, 8, 10, 12, 14, 16, 18]
+\end{pythoncode}
+
+\begin{exercice}
+Reprendre l'exercice \ref{python:listes:exos:images} page \pageref{python:listes:exos:images}
+en utilisant des listes en compréhension.
+\end{exercice}
+
+\section{Exercices}
+
+\begin{exercice}
+Soit les listes suivantes~:
+
+\texttt{t1 = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]}
+
+\texttt{t2 = ['Janvier', 'Fevrier', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'Decembre']}
+
+Écrire un programme qui fusionne les listes \texttt{t1} et \texttt{t2} en une nouvelle liste \texttt{t3} en alternant les éléments de \texttt{2} et \texttt{t1}, soit~:
+
+\texttt{['Janvier', 31, 'Fevrier', 28, 'Mars', 31, \dots]}
+\end{exercice}
+
+\begin{exercice}
+Toutes les questions qui suivent font référence à la liste ci-dessous~:
+
+\texttt{nombres = [32, 5, 12, 8, 3, 75, 2, 15]}
+	\begin{enumerate}
+	\item Écrire une fonction \texttt{somme} qui prenne une liste de nombres en argument et qui
+	renvoie la somme des éléments de cette liste.
+
+	Tester votre fonction avec la liste \texttt{nombres}.
+	\item Écrire une fonction \texttt{moyenne} qui prenne une liste de nombres en argument
+	et qui renvoie la moyenne de ces nombres.
+
+	Réinvestir la fonction \texttt{somme}
+	et tester votre fonction sur la liste \texttt{nombres}.
+
+	\item Ecrire deux fonctions \texttt{maximum} et \texttt{minimum} qui prennent une liste
+	de nombres en argument et qui renvoie respectivement le maximum et le minimum de cette liste.
+
+	Tester vos fonctions avec la liste \texttt{nombres}.
+
+	\item Écrire un programme qui construit deux listes \texttt{pairs} et \texttt{impairs}
+	contenant respectivement les nombres pairs et impairs de la liste \texttt{nombres}.
+	\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Fluctuation d'échantillonage]
+Le but de ce programme \texttt{stats.py} que vous aller écrire est d'observer le phénomène dit de \textit{fluctuation d'échantillonage}.
+\begin{enumerate}
+\item À l'aide la construction de listes en compréhension, fabriquer une liste \texttt{series} de $N$ nombres entiers $n$ aléatoires
+\footnote{On pourra utiliser la fonction \texttt{randrange(\textit{[start,]} stop \textit{[,step]})}. L'argument \texttt{stop} est obligatoire et les autres arguments \texttt{\textit{start}} et \texttt{\textit{step}} sont optionnels. Si \texttt{stop} est seul renseigné, \texttt{randrange} retourne un nombre \textit{entier} $x$ tel que $0\ie x < \texttt{stop}$.} tels que \[1\ie n \ie 10\] où $N$ sera un entier demandé à l'utilisateur.
+\item Construire les listes \texttt{effectifs} et \texttt{frequences} correspondant respectivement aux effectifs et aux fréquences des nombres de 0 à 10 dans la série \texttt{serie}.
+\item Présenter vos résultats dans un tableau ressemblant à celui ci-dessous (voir le chapitre \ref{python:caracteres} pour le formatage d'une chaîne de caractères à l'aide de la fonction \texttt{format()}
+-- section \ref{python:caracteres:format} page \pageref{python:caracteres:format}).
+\begin{pythoncode}
+--------------------
+| Nb | Eff  | Freq |
+--------------------
+| 1  | 1    | 0.03 |
+| 2  | 6    | 0.20 |
+| 3  | 4    | 0.13 |
+| 4  | 5    | 0.17 |
+| 5  | 3    | 0.10 |
+| 6  | 1    | 0.03 |
+| 7  | 2    | 0.07 |
+| 8  | 3    | 0.10 |
+| 9  | 2    | 0.07 |
+| 10 | 3    | 0.10 |
+--------------------
+\end{pythoncode}
+\item Faire varier $N$ et commenter les résultats observés. On pourra adapter le programme pour qu'il prenne en plusieurs arguments en ligne de commande et qu'il affiche un tableau comparatif des résultats pour différentes valeurs de $N$.
+
+\end{enumerate}
+\end{exercice}

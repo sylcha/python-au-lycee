@@ -1,0 +1,38 @@
+# Common LaTeX files
+*.acn
+*.acr
+*.alg
+*.aux
+*.bbl
+*.blg
+*.dvi
+*.fdb_latexmk
+*.fls
+*.glg
+*.glo
+*.gls
+*.idx
+*.ilg
+*.ind
+*.ist
+*.listing
+*.lof
+*.log
+*.lot
+*.maf
+*.mtc
+*.mtc1
+*.out
+*.synctex.gz
+*.toc
+
+# Sublime Text files
+*.sublime-project
+*.sublime-workspace
+
+# Dropbox
+.dropbox
+*/.dropbox
+
+# Minted specific folders
+*/_minted-*/

@@ -1,0 +1,330 @@
+% !TEX root = ../memo/python_memo.tex
+% !TEX encoding = UTF-8 Unicode
+% creation: 2015-09-10
+
+\chapter{Débuter avec Python}
+
+\section{Python comme machine à calculer}
+
+\subsection{Environnement de travail}
+
+Dans le menu \textsf{Démarrer}, taper \og{} IDLE \fg{} et choisir \textsf{IDLE Python} dans la liste des programmes
+proposés. Vous venez d'ouvrir une console d'interprétation du langage Python. On va pouvoir parler
+à l'ordinateur en utilisant ce langage et lui demander d'exécuter certaines tâches.
+On saisi une phrase puis on tape sur entrée et l'interpréteur traduit la ligne de commandes
+et fait le travail.
+
+
+Commençons par des calculs.
+
+\subsection{Opérations de bases}
+Il existe plusieurs opérateurs pour faire les opérations courantes
+
+\begin{pythoncode}
+>>> 1 + 1                  # Addition
+2
+>>> 9 - 13                 # Soustraction
+-4
+>>> 2 * 3                  # Multiplication
+6
+>>> 17 / 4                 # Division
+4.25
+>>> 2 ** 4                 # Puissance
+16
+>>> (2 - 3) * 6 + 4 / 2    # Memes priorités qu'en maths
+-4
+\end{pythoncode}
+
+Cas de la division entière (ou encore la division euclidienne)\index{Divisions (2 types)}.
+
+\begin{pythoncode}
+>>> 17 / 4       # Division décimale
+4.25
+>>> 17 // 4      # Division entière _explicite_
+4
+>>> 17,0 / 4     # ATTENTION : La virgule en Python est un point (notation,
+(17, 0)          # américaine) d'où le résultat inattendu
+\end{pythoncode}
+
+On a une syntaxe pratique pour l'écriture scientifique et plus généralement pour les multiplications
+par des puissances de $10$~:
+
+\begin{pythoncode}
+>>> 2e3      # 2 x 10^3
+2000.0
+>>> 2E3      # `E` majuscule marche aussi
+2000.0
+>>> 3e-3     # 3 x 10^-3
+0.003
+>>> 31.27e5  # 31,27 x 10^5
+3127000.0
+\end{pythoncode}
+
+\begin{exercice}
+Calculer les valeurs des expressions suivantes avec Python~:
+\begin{align*}
+A &= (4\times5 - 10)\div 3
+&
+B &= \frac{4}{3}+5\times8-3\\
+C &= (3^2-1)(3-5^2)
+&
+D &= 2\times(-3)^2-4\times(-3)+7\\
+E &= \left(4^6-12^3\right)\times(1-9^4)
+&
+F &= \frac{4\times10^{21}+12\times10^{23}}{8\times10^{25}}\\
+\end{align*}
+\end{exercice}
+
+\begin{exercice}
+Sachant que la vitesse de la lumière est de $299\,792\,458\,\text{m}.\text{s}^{-1}$,
+donner le nombre de kilomètres parcouru par la lumière en un an (soit une année lumière).
+\end{exercice}
+
+\begin{exercice}
+Utiliser Python pour calculer le reste de la division euclidienne de $2^{32}+1$ par 641. On pourra commencer par se débrouiller avec la division entière ("//"), puis on comparera avec l'opération "\%" existant déjà en Python.
+\end{exercice}
+
+\begin{exercice}\label{python:debuts:exofct}
+Soit une fonction \[h\,:\,x\longmapsto 3x^2-5x+5\]
+ Calculer à l'aide de Python les images	de $-2$, $1$ et $7$.
+\end{exercice}
+
+\subsection{Opérations plus complexes}
+Pour calculer des opérations plus complexes comme des racines carrées par exemple, on doit dire à
+Python de regarder dans un livre car il ne sait pas le faire tout seul. On doit faire appel à une
+\textbf{librairie} qui va appporter plus de fonctionalité au langage.
+
+Pour faire des calculs en mathématiques, on fait appel à la librairie\dots{} \motcle{math}~!
+On utilise pour cela les mots clés \motcle{from} et \motcle{import}\index{Fonctions!Mathématiques}.
+
+\begin{pythoncode}
+>>> from math import sqrt      # 'sqrt' pour 'square root', la racine carrée
+>>> sqrt(2)
+1.4142135623730951
+\end{pythoncode}
+Dans l'exemple ci-dessus, on indique à Python qu'on souhaite utiliser la fonction \motcle{sqrt()} pour
+calculer une racine carrée. Une fois cette ligne saisie, Python connaîtra cette fonction.
+
+On peut aussi indiquer à Python d'importer \textit{toute} une librairie.
+
+Il existe pour cela deux méthode. Dans la première, on charge \textit{seulement} la librairie
+dans la mémoire de Python.Il faudra alors \textit{référencer}
+les fonctions à la librairie importée. Par exemple, on dira \motcle{math.sqrt()} et non plus \motcle{sqrt()}.
+
+\begin{pythoncode}
+>>> import math              # on importe toute la librairie 'math'
+>>> math.sqrt(2)             # on référence la fonction 'sqrt'
+1.4142135623730951
+>>> math.cos(2*math.pi)      # Python mesure les angles en radians !
+1.0
+>>> math.degrees(math.pi/4)  # une conversion en degrés d'un angle en radian
+45.0
+\end{pythoncode}
+
+
+\begin{remarque}
+Attention~: bien faire la différence entre une \textit{fonction} comme \motcle{math.cos()}
+qui nécessite des parenthèses (on passe un nombre comme paramètre) et une \textit{constante}
+comme \motcle{math.pi} qui ne nécessite pas de parenthèses.
+\end{remarque}
+
+Dans la deuxième technique d'utilisation d'une librairie, on dit à Python de charger en mémoire
+toutes les fonctions et constantes de la  librairie en une fois. On se sert alors du charactère
+\motcle{*} (appelé \textit{wild card}). Dans ce cas, on a plus à référencer la fonction à la librairie.
+
+Cette dernière méthode d'importation d'une librairie est toutefois déconseillée~:
+en effet, si on utilise plusieurs librairies et que deux fonctions portent
+le même nom, Python utilisera comme librairie la dernière importée seulement.
+
+\begin{pythoncode}
+>>> from math import *
+>>> cos(pi)
+-1.0
+\end{pythoncode}
+
+\begin{exercice}
+Calculer les expressions suivantes à l'aide de Python~:
+\begin{align*}
+G &= \cos\left(\frac{3\pi}{2}\right)
+&
+H &= \tan(45\degres)\\
+I &= \sqrt{2\times5^2-9\times5+9}
+&
+J &= \sqrt{5\cos\left(\frac{\pi}{5}\right)-3\sin\left(-\frac{\pi}{5}\right)}
+\end{align*}
+\end{exercice}
+
+\begin{exercice}
+Parce que ces bases de numération ont joué un rôle dans l'histoire de l'informatique, Python dispose
+ (dans sa version de base) de fonctions de conversion en binaire (base 2), en octale (base 8) ou en
+ hexadécimal (base 16). Utiliser les fonctions "bin", "oct" et "hex" pour convertir les entiers 17
+ et 65 en base 2, 8 ou 16. Que penser du format d'affichage des résultats~?
+\end{exercice}
+
+
+
+\section{Fonctions}\label{python:fonctions}
+Il est possible dans Python de définir ses propres \textit{fonctions}\index{Fonctions!Definitions}. C'est un bout de code,
+quelques lignes de commandes qui décrivent une série de tâches, que Python va mettre en mémoire
+et que nous allons pouvoir réutiliser tant que la session est ouverte.
+
+\subsection{Un premier exemple}
+Pour définir une fonction on utlise le mot clé \motcle{def}, suivi du nom de la fonction
+\footnote{Attention, il ne faut pas utiliser un mot déjà employé~!}
+suivi d'un couple de parenthèses, suivi de deux points \motcle{:}
+\footnote{Cette première ligne est la \textit{signature}\index{Fonctions!Signature}
+de la fonction \texttt{resultat()}}.
+
+Ensuite, il faut faire comprendre à Python quelles sont les lignes qui font partie de la fonction.
+Pour cela, on utlise une {indentation}, c'est à dire un écart de $4$ espaces de la marge.
+
+\begin{pythoncode}
+>>> def resultat():            # 'signature' de la fonction
+...    return 4**2 - 3          # bloc de code (notez l'indentation)
+...
+>>> resultat()                  # appel de la fonction
+13
+\end{pythoncode}
+
+Ci-dessus, aux deux premières lignes, nous avons écrit une fonction \texttt{resultat()}
+qui retourne (utilisation de la commande \motcle{return}) le résultat d'un calcul~: $4^2-3$.
+Pour appeler la fonction, on saisit juste son nom
+suivi des parenthèses. Attention à ne pas oublier les parenthèses par contre, sinon le résultat
+est inattendu~!
+
+\begin{pythoncode}
+>>> resultat
+<function resultat at 0x7f1a59c4aea0>
+\end{pythoncode}
+
+On peut utiliser cette fonction dans un autre calcul~:
+
+\begin{pythoncode}
+>>> 2 * resultat()
+26
+\end{pythoncode}
+
+Par contre, notre fonction n'est pas très intéressante car elle fait toujours le même calcul.
+Comment pourrait-on faire pour qu'elle calcule $x^2-3$ pour une valeur de $x$ que nous aurions
+choisi~? C'est ce que nous allons voir dans un deuxième exemple.
+
+\subsection{Notion de paramètre}
+Lorsque nous avons utilisé la fonction \motcle{math.sqrt()} pour calculer $\sqrt{2}$, nous avons
+passé le nombre $2$ comme \textit{argument} à la fonction~:
+
+\begin{pythoncode}
+>>> math.sqrt(2)              # on donne '2' comme argument à la fonction 'sqrt()'
+1.4142135623730951
+\end{pythoncode}
+
+On va donc utiliser le même principe dans la fonction qui doit calculer $x^2-3$.
+
+\begin{pythoncode}
+>>> def f(x):                 # définition du paramètre 'x' avec la fonction
+...     return x**2 - 3        # utilisation du paramètre 'x' dans le calcul
+...
+\end{pythoncode}
+
+Entre les parenthèses dans la signature de la fonction, on introduit un \textit{paramètre}
+\index{Fonctions!Paramètres} nommé
+ici \texttt{x} (mais nous aurions pu lui donner un tout autre nom comme \texttt{choucroute} mais
+c'est plus long). Cela indique à Python que lorsque nous allons appeler la fonction, il faudra lui
+passer un argument, en l'occurence un nombre.
+
+\begin{pythoncode}
+>>> f(2)                      # appel de la fonction avec l'argument '2'
+1
+>>> f(4)                      # appel de la fonction avec l'argument '4'
+13
+\end{pythoncode}
+
+Par exemple, lorsque nous appelons la fonction avec l'argument $2$, Python associe le nombre $2$
+au paramètre \texttt{x}. Lorsqu'on réutilise le paramètre dans l'expression du calcul,
+Python remplace $x$ par $2$.
+
+Si nous appelons la fonction \texttt{f} sans argument (comme la fonction \motcle{resultat()}), on a
+un message d'erreur~: Python nous dit qu'il ne sait pas quoi faire parce qu'il attend un argument~!
+
+\begin{pythoncode}
+>>> f()
+Traceback (most recent call last):
+  File " <stdin> ", line 1, in <module>
+TypeError: f() missing 1 required positional argument: 'x'
+\end{pythoncode}
+
+\begin{exercice}
+Écrire une fonction qui calcule l'expression $(x-3)(2x+9)$ pour une valeur de $x$ choisie par l'utilisateur.
+\end{exercice}
+
+\begin{exercice}
+Reprendre l'exercice \ref{python:debuts:exofct} mais le traiter à l'aide d'une fonction.
+\end{exercice}
+
+\begin{exercice}
+Écrire les fonctions qui calculent les grandeurs suivantes~:
+\begin{enumerate}
+	\item l'aire d'un carré connaissant la longueur de son côté~;
+	\item le périmètre d'un cercle connaissant son rayon (utiliser la constante Python
+	\motcle{math.pi}).
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}\label{python:fonctions:exos:sphere}
+Appel d'une fonction depuis une autre fonction.
+\begin{enumerate}
+	\item Écrire une fonction \texttt{cube()} qui renvoie le cube de son argument.
+	\item Écrire une fonction \texttt{volume\_sphere()} qui renvoie le volume d'une shpère
+	de rayon $r$ passé en argument. Cette fonction devra utiliser la fonction \texttt{cube()}
+	précédente ainsi que la constante \texttt{math.pi}.
+\end{enumerate}
+\end{exercice}
+
+\subsection{Plusieurs paramètres}
+On peut utiliser le même concept avec plusieurs paramètres. Il suffit de séparer par une
+virgule \motcle{,} les paramètres  dans la signature et les arguments dans l'appel de la fonction~:
+
+\begin{pythoncode}
+>>> def hypotenuse(a, b):
+...     return math.sqrt(a**2 + b**2)
+...
+>>> hypotenuse(3, 4)
+5.0
+\end{pythoncode}
+
+La fonction \texttt{hypotenuse()} utilise deux arguments \texttt{a} et \texttt{b}.
+Au fait, que fait cette fonction~?
+
+\begin{exercice}
+Écrire une fonction \texttt{aire()} qui prend en paramètres la longueur et la largeur
+d'un rectangle et qui renvoie son aire.
+\end{exercice}
+
+\begin{exercice}
+Écrire une fonction \texttt{volume\_boite()} qui calcule le volume d'une boîte connaissant
+la  largeur \texttt{l}, la hauteur \texttt{h} et la profondeur \texttt{p}
+qui seront les paramètres de la fonction.
+\end{exercice}
+
+\begin{exercice}[Conversion de degrés]
+Si $F$ est une température en degré Fahrenheit, la température en degré Celsius est donnée par
+$\dfrac59(F - 32)$.
+
+Écrire une fonction \texttt{convert\_F\_to\_C()} qui convertit une température donnée en degrés
+Fahrenheit en degrés Celsius.
+\end{exercice}
+
+\begin{exercice} [Triangle]
+\begin{enumerate}
+	\item Écrire une fonction \texttt{perimetre\_triangle()} qui prenne en paramètres la longueur de
+	ses trois côtés et qui renvoie la valeur de son périmètre.
+	\item Écrire une fonction \texttt{aire\_triangle()} qui prenne en paramètres la longueur de
+	ses trois côtés et qui renvoie la valeur de son aire.
+
+	On donne la formule suivante\footnote{que l'on doit à Héron d'Alexandrie, un mathématicien grec
+	du I\ier{} siècle après J-C.}
+	qui permet de calculer l'aire $\mathcal{A}$ connaissant les longueurs $a$, $b$ et $c$ des trois
+	côtés~:
+
+	\[\mathcal{A} = \sqrt{p(p-a)(p-b)(p-c)}\quad\text{avec}\quad p = \frac 12 (a+b+c)\]
+\end{enumerate}
+\end{exercice}

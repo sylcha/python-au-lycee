@@ -1,0 +1,413 @@
+% !TEX root = ../memo/python_memo.tex
+% !TEX encoding = UTF-8 Unicode
+% creation: 2015-12-09
+
+\chapter{Chaînes de caractères}
+\label{python:caracteres}
+
+\section{Qu'est-ce qu'une chaîne de caractères~?}
+\subsection{Encodage}
+
+Avant de présenter les chaînes de caractères, il est important de rappeler que ces chaînes sont représentées par des mots binaires dans la mémoire de l'ordinateur et qu'il existe plusieurs représentations différentes. Python a besoin de savoir quel est l'encodage utilisé dans le script\footnote{Si l'encodage utilisé dans le script est différent de l'encodage par défaut utilisé par Python, le script va planter. Donc plutôt que de chercher si ça va marcher ou pas, on intègre \textbf{TOUJOURS} la ligne déclarant l'encodage du script}. Pour cela, on introduit en début du document (traditionnellement après le \textit{shebang}\index{Shebang}, une ligne qui décrit l'encodage utilisé~:
+\footnote{Attention à bien respecter la syntaxe, notamment les espaces, sinon l'information ne sera pas prise en compte par Python.}
+
+\begin{pythoncode}
+# -*- coding:utf8 -*-
+\end{pythoncode}
+
+Par défaut, Python 2.7 utlise l'encodage \textit{ASCII} et Python 3 l'encodage \textit{UTF-8}. Aujourd'hui, on utilise généralement l'encodage \textit{UTF-8} qui permet de gérer facilement les accents en français et qui sera compris par la plupart des systèmes d'exploitation modernes.
+
+Pour l'anecdote, si vous voulez savoir quels types d'encodage sont reconnus par Python, vous pouvez taper les deux lignes suivantes dans un interpréteur~: elle vous donneront la liste de tous ces encodages (et vous pourrez voir qu'il y en a beaucoup~!)
+
+\begin{pythoncode}
+>>> import encodings
+>>> print(''.join('- ' + e + '\n' for e in sorted(set(encodings.aliases.aliases.values()))))
+\end{pythoncode}
+
+\subsection{Le type \texttt{str}}
+
+Sous Python, les chaînes de caractères sont des variables de type \texttt{str} (pour \textit{string} en anglais).
+\begin{pythoncode}
+>>> type('abc')
+<type 'str'>
+\end{pythoncode}
+
+Une chaîne de caractères est représentée au niveau de la mémoire \textit{presque} comme une liste de caractères. On peut accéder à ses éléments un par un, connaître sa longueur à l'aide de la fonction \texttt{len()} comme on le ferait d'une "vraie" liste (voir chapitre \ref{python:listes} page \ref{python:listes}).
+\begin{pythoncode}
+>>> chaine = "Une petite phrase."
+>>> print(chaine[0])
+U
+>>> print(chaine[-1])
+.
+>>> print(chaine[5])
+e
+>>> print(len(chaine))
+18
+\end{pythoncode}
+Explication du "presque". Essayons de retrouver les caractères de la chaîne \texttt{Noël}.
+\begin{pythoncode}
+>>> print(chaine)
+Noël
+>>> print(len(chaine))
+5
+>>> print(chaine[0], chaine[1], chaine[2], chaine[3], chaine[4])
+N o ? ? l
+\end{pythoncode}
+Le mot \textsf{Noël} contient seulement 4 lettres mais pour Python, la longueur de la liste est 5. En réalité, pour coder le caractère \textsf{ë} en Unicode, Python a besoin de deux octets (élément 2 et 3 de la listes). Pour l'affichage, ces octets n'ont de sens que pris en paire mais pas de sens séparément. Donc plutôt qu'une liste de caractères, il vaut mieux concevoir une variable de type \texttt{str} comme une liste d'octets encodant des caractères.
+
+On peut préciser à Python en ajoutant une \texttt{u} devant la chaîne qu'une chaîne de caractères est une série de code unicode. Chaque chaîne sera alors bien pris comme une séquence de caractères dans leur globalité et non comme une série d'octets. Le type de la chaîne sera alors \texttt{unicode} et non \texttt{str} comme précédemment.
+\begin{pythoncode}
+>>> chaine = u"Noël"
+>>> print(len(chaine))
+4
+>>> print(chaine[0], chaine[1], chaine[2], chaine[3])
+N o ë l
+>>> type(chaine)
+<type 'unicode'>
+\end{pythoncode}
+Des fonctions existent (\texttt{encode} et \texttt{decode}) pour convertir une chaîne au format \texttt{str} en format \texttt{unicode} et vice-versa.
+
+Une chaîne de caractères se parcourt malgré tout comme une liste, par exemple à l'aide de la commande \texttt{for}~:
+\begin{pythoncode}
+>>> chaine = "exemple"
+>>> for car in chaine:
+...     print(car + "*")
+...
+e*
+x*
+e*
+m*
+p*
+l*
+e*
+\end{pythoncode}
+% \newpage
+\textbf{Grosse différence} avec les vraies listes, les chaînes de caractères ne sont pas mutables~!
+\begin{pythoncode}
+>>> liste = [1,2,3]
+>>> print(liste[1])
+2
+>>> liste[1] = '*'
+>>> print(liste[1])
+*
+>>> chaine = "man"
+>>> print(chaine[1])
+a
+>>> chaine[1] = 'e'
+Traceback (most recent call last):
+  File " <stdin> ", line 1, in <module>
+TypeError: 'str' object does not support item assignment
+\end{pythoncode}
+
+\section{Manipulations}
+\subsection{Sous-chaînes}\index{Sous-chaîne}
+Python possède une technique unique (appelée \textit{slicing}\index{Slicing}) qui permet de récupérer un morceau de chaîne (sous-chaîne). La syntaxe est la suivante~: supposons que ma chaîne s'appelle \texttt{ch}, je désigne une sous-chaine de \texttt{ch} par \texttt{ch[n:m]} ou \texttt{n} est l'index du premier caratère pris dans la sous-chaîne et \texttt{m} l'index de la lettre \textit{suivant} celle où on s'arrête.
+\begin{pythoncode}
+>>> chaine = "Prolifique"
+>>> print(chaine[0:3])
+Pro
+>>> print(chaine[:3])
+Pro
+>>> print(chaine[3:])
+lifique
+\end{pythoncode}
+Si rien n'est inscrit à la place de \texttt{n} dans \texttt{chaine[n:m]}, alors Python considère qu'il doit commencer au premier caractère. Si rien n'est inscrit à la place de \texttt{m} dans \texttt{chaine[n:m]}, alors Python considère qu'il doit terminer la sous-chaîne avec le dernier caractère.
+
+
+\subsection{Concaténation}
+La \textit{concaténation}\index{Concaténation} de deux chaînes de caractères est la mise bout à bout de ces deux chaînes. Sous Python, on utilise le symbole d'addition \texttt{+} pour cette opération.
+\begin{pythoncode}
+>>> a = "Hello,"
+>>> b = " world!"
+>>> print(a + b)
+Hello, world!
+\end{pythoncode}
+
+\subsection{Répétition}
+Si l'on veut répéter plusieurs fois la même chaîne de caractères, on utilise l'opérateur \motcle{*}.
+\begin{pythoncode}
+>>> print('-' * 20)
+--------------------
+>>> c = "Pipo"
+>>> print(c * 12)
+PipoPipoPipoPipoPipoPipoPipoPipoPipoPipoPipoPipo
+\end{pythoncode}
+
+\subsection{Comparaison}
+Les chaînes de caractères sont comparables au même titre que des nombres.
+
+\begin{pythoncode}
+>>> print("arbre" < "arbuste")
+True
+>>> print("arbre" < "arbousier")
+False
+\end{pythoncode}
+
+La comparaison on le voit ne se fait pas sur les longueurs de chaînes. L'ordre qui prévaut dans ces comparaisons de chaînes est l'ordre de déclaraction des caractères dans le code ASCII qui est l'ordre alphabétique. Ainsi la chaîne \texttt{"arbre"} est inférieure à la chaîne \texttt{"arbuste"} car le caractère \texttt{'r'} est avant le caractère \texttt{'u'} dans l'ordre alphabétique mais cette même chaîne est supérieure à la chaîne \texttt{"arbousier"} car le caractère \texttt{'r'} est après le caractère \texttt{'o'}.
+
+On peut donc se servir de cette comparaison de chaînes de caractères pour classer des mots dans l'ordre alphabétique.
+
+\begin{remarque}
+\textbf{Attention~!} Les minuscules venant après les majuscules dans la table des caractères ASCII, cela peut conduire à des résultats bizarres~:
+\begin{pythoncode}
+>>> print('arbre' < 'Type')
+False
+>>> print('arbre' < 'type')
+True
+\end{pythoncode}
+\end{remarque}
+
+\subsection{Chaînes en tant qu'objets}
+Les chaînes de caractères sont aussi considérées comme des \textit{objets}
+\footnote{Nous reviendrons plus en détails plus tard sur la notion d'objet\dots} par Python
+et à ce titre, Python propose un grand nombre de fonctions opérant sur des chaînes de caractères.
+
+En voici quelques exemples~:
+\begin{center}
+\tabulinesep=1.5mm
+\begin{tabu}to0.9\linewidth{|X[1,l]|X[3,l]|}
+\hline
+\textbf{Nom} & \textbf{Fonction}\\
+\hline
+\motcle{lower} & convertit une chaîne en minuscule\\
+\hline
+\motcle{upper} & convertit une chaîne en majuscule\\
+\hline
+\motcle{title} & convertit l'initiale de chaque mot en majuscule\\
+\hline
+\motcle{capitalize} & convertit la première lettre de chaque ligne en majuscule\\
+\hline
+\motcle{swapcase} & change les majuscules en minuscules et vice-versa\\
+\hline
+\motcle{replace}\texttt{(c1,c2)} &
+remplace tous les caractères \texttt{c1} de la chaîne par le caractère \texttt{c2}\\
+\hline
+\motcle{count}\texttt{(s)} & compte le nombre d'apparition d'une sous-chaîne \texttt{s} dans la chaîne\\
+\hline
+\motcle{find}\texttt{(s)} & cherche la position de la sous-chaîne \texttt{s} dans la chaîne\\
+\hline
+\motcle{split} & convertit la chaîne en une liste de sous-chaînes en utilisant le caractère espace pour
+        caractère de séparation (ou tout autre caractère passé en argument)\\
+\hline
+\motcle{join} & prend une liste de chaînes en argument et renvoie une autre chaîne en intercalant
+       la chaîne appelante\\
+\hline
+\end{tabu}
+\end{center}
+
+Quand un fonction intervient sur un objet, on la place \textit{après} l'objet précédée par un point~: \texttt{objet.fonction(arg1, arg2, \dots)}.
+
+\begin{pythoncode}
+>>> chaine = u"jérémy"
+>>> print(chaine.upper())
+JÉRÉMY
+>>> print(chaine.capitalize())
+Jérémy
+>>> print(chaine.count(u'é'))
+2
+>>> print(chaine.replace(u'é', '$'))
+j$r$my
+\end{pythoncode}
+
+\section{Formater une chaîne}
+\label{python:caracteres:format}
+L'instruction \texttt{format} permet de formater une chaîne de caractères.  Prenons un exemple~:
+\begin{pythoncode}
+>>> x = 2
+>>> result = "La racine carrée de {0} est {1}".format(x, math.sqrt(x))
+>>> print(result)
+La racine carrée de 2 est 1.41421356237
+\end{pythoncode}
+
+À l'intérieur de la chaîne \texttt{result} il y a deux \textit{champs}. Cette fonction prend autant d'arguments que la chaîne contient de champs, dans l'ordre où ils sont énoncés. Ils peuvent être nommés pour plus de lisibilité : dans ce cas, on utilise ces noms pour passer les valeurs aux arguments de la fonction.
+\begin{pythoncode}
+>>> x = 2
+>>> result = "La racine carrée de {nombre} est {racine}".format(nombre = x, racine = math.sqrt(x))
+>>> print(result)
+La racine carrée de 2 est 1.41421356237
+\end{pythoncode}
+
+On peut préciser après le champ le type attendu~:
+\begin{pythoncode}
+>>> x = 2
+>>> result = "La racine carrée de {nombre:s} est {racine}".format(nombre = "x", racine = math.sqrt(x))
+>>> print(result)
+La racine carrée de x est 1.41421356237
+\end{pythoncode}
+Dans l'exemple ci-dessus, j'ai précisé que le type du champ \texttt{nombre} devait être une chaîne de caractère (\texttt{\{nombre:s\}}). La syntaxe du type de format en la suivante~:
+\[[[car]align][largeur][.pr\acute{e}cision]type\]
+\begin{description}
+\item[align] Détaille l'affichage du champ.
+\begin{center}
+\tabulinesep=1.5mm
+\begin{tabu}to 0.8\linewidth{|>{\ttfamily}X[1,cm]|X[4,lm]|}
+\hline
++ & Affiche le signe \texttt{+} avant les nombres positifs (omis par défaut)\\
+\hline
+< & Aligne le champ sur la gauche\\
+\hline
+> & Aligne sur la droite\\
+\hline
+\^{ } & Centré dans le champ\\
+\hline
+car & Utilise le charactère \texttt{<car>} à la place des espaces pour couvrir la largeur du champ si elle est spécifiée (ceci est optionnel, espace par défaut).\\
+\hline
+\end{tabu}
+\end{center}
+
+\item[largeur] Minimum de caractères à afficher dans le champ. Si le nombre de caractères du paramètres est supérieur alors ce nombre n'est pas respecté.
+\item[precision] Maximum de chiffres après la virgule pour un décimal. Maximum de caractères à afficher dans le champ pour une chaîne. \textit{Noter le point avant cette valeur}.
+\item[type] type du champ
+\begin{center}
+\tabulinesep=1.5mm
+\begin{tabu}to 0.8\linewidth{|>{\ttfamily}X[1,cm]|X[4,lm]|}
+\hline
+d & Nombre entier\\
+\hline
+f & Nombre décimal\\
+\hline
+\% & Pourcentage\\
+\hline
+, & Affiche les nombre à l'américaine (avec des virgule pour séparer les classes de mille)\\
+\hline
+s & Chaîne de caractères\\
+\hline
+\end{tabu}
+\end{center}
+\end{description}
+Quelques exemples~:
+
+\begin{exemple}
+Un premier exemple où on dresse une liste de nombres et de leurs racines carrées arrondies
+au millième près.
+\begin{pythonexemple}
+>>> i = 5
+>>> while (i < 12):
+...    print("Nombre : {nb:2d}, racine carrée : {racine:2.3f}".format(nb = i, racine = math.sqrt(i)))
+...    i += 1
+\end{pythonexemple}
+
+\begin{result}
+Nombre :  5, racine carrée : 2.236
+Nombre :  6, racine carrée : 2.449
+Nombre :  7, racine carrée : 2.646
+Nombre :  8, racine carrée : 2.828
+Nombre :  9, racine carrée : 3.000
+Nombre : 10, racine carrée : 3.162
+Nombre : 11, racine carrée : 3.317
+\end{result}
+
+\end{exemple}
+
+\begin{exemple}
+Dans cet autre exemple, on dresse un tableau des carrés, des cubes et des puissances quatrièmes
+des 10 premiers entiers.
+\begin{pythonexemple}
+print("---------------------------")
+print("| x  | x^2 | x^3  | x^4   |")
+print("---------------------------")
+
+i = 1
+result = "| {x:<2d} | {carre:<3d} | {cube:<4d} | {quatre:<5d} |"
+while (i <= 10):
+    print(result.format(x=i, carre=i*i, cube=i*i*i, quatre=i*i*i*i))
+    i += 1
+print("---------------------------")
+\end{pythonexemple}
+
+\begin{result}
+---------------------------
+| x  | x^2 | x^3  | x^4   |
+---------------------------
+| 1  | 1   | 1    | 1     |
+| 2  | 4   | 8    | 16    |
+| 3  | 9   | 27   | 81    |
+| 4  | 16  | 64   | 256   |
+| 5  | 25  | 125  | 625   |
+| 6  | 36  | 216  | 1296  |
+| 7  | 49  | 343  | 2401  |
+| 8  | 64  | 512  | 4096  |
+| 9  | 81  | 729  | 6561  |
+| 10 | 100 | 1000 | 10000 |
+---------------------------
+\end{result}
+\end{exemple}
+
+
+
+\begin{exemple}
+Dans ce dernier exemple, on écrit une résultat sous la forme d'un pourcentage arrondi au centième.
+\begin{pythonexemple}
+>>> x = 8769.23
+>>> y = 78817.98
+>>> print("Un pourcentage : {0:.2%}".format(x/y))
+\end{pythonexemple}
+
+\begin{result}
+Un pourcentage : 11.13%
+\end{result}
+\end{exemple}
+
+
+
+\section{Exercices}
+Les exercices suivants pourront être résolus \textit{d'abord} sans utiliser les fonctions intégrées.
+
+\begin{exercice}
+Écrire une fonction \texttt{contientE} qui prend une chaîne de caractères en argument et qui renvoie \texttt{True} si cette chaîne de caractères contient la lettre \textsf{e} et \texttt{False} sinon.
+\end{exercice}
+
+\begin{exercice}
+Écrire une fonction \texttt{compteA} une fonction qui compte le nombre de \textsf{A} (majuscule ou minuscule) dans une chaîne de caractères passée en argument.
+\end{exercice}
+
+\begin{exercice}
+Écrire une fonction qui prend une chaîne de caractères quelconque et qui intercale le caractère \texttt{*} entre toutes les lettres et renvoie cette chaîne transformée.
+
+Par exemple \textsf{ordinateur} deviendra \textsf{o*r*d*i*n*a*t*e*u*r}.
+\end{exercice}
+
+\begin{exercice}
+Écrire une fonction \texttt{trouvePosition} qui prend deux arguments~: une chaîne de caractère et une caractère seul (chaîne de longueur 1). Elle retournera un entier égal à l'index de la première occurrence du caractère dans la chaîne ou $-1$ si le caractère n'existe pas dans la chaîne.
+\end{exercice}
+
+\begin{exercice}
+Écrire une fonction \texttt{inverseChaine} qui prend une chaîne de caractère en argument et qui retourne une chaîne égale aux caractères de l'argument dans l'ordre inverse.
+
+Par exemple, pour \textsf{normal}, la fonction retournera \textsf{lamron}.
+\end{exercice}
+
+\begin{exercice}[Palindromes]
+Écrire une fonction \texttt{isPalindrome} qui détermine si une chaîne de caractères est un palindrome ou non.
+
+Un palindrome est une chaîne qui peut se lire dans les deux sens. Par exemple \textsf{Hannah} ou \textsf{Engage le jeu que je le gagne} sont des palindromes (remarquez que l'on ne tient pas compte du fait qu'une lettre est une majuscule ou pas).
+\end{exercice}
+
+\begin{exercice}
+Écrire un programme qui prenne un entier en ligne de commandes et qui affiche les les puissances de $2$ entières qui sont plus petites que ce nombre.
+\end{exercice}
+
+\begin{exercice}
+Écrire un programme qui affiche une table formatée des nombres suivants~: $n$, $^2$, $n\ln n$, $2^n$ et $\E^n$. Prendre deux chiffres après la virgule pour les valeurs décimales et aligner les nombres à droite.
+\end{exercice}
+
+\begin{exercice}
+Écrire un programme qui affiche dans une table formatée, les valeurs des cosinus, sinus et tangente des angles suivants~: $0$,  $\pi$, $\frac{\pi}2$, $\frac{\pi}3$, $\frac{\pi}4$, $\frac{\pi}5$, $\frac{\pi}6$. On donnera des valeurs approchées à $10^{-3}$ près.
+\end{exercice}
+
+\begin{exercice}
+Écrire une fonction \texttt{table} qui admet un paramètre \texttt{nombre} et qui affiche de manière formatée la table de multiplication du nombre passé en argument.
+\begin{pythoncode}
+0  x 7 = 0
+1  x 7 = 7
+2  x 7 = 14
+3  x 7 = 21
+4  x 7 = 28
+5  x 7 = 35
+6  x 7 = 42
+7  x 7 = 49
+8  x 7 = 56
+9  x 7 = 63
+10 x 7 = 70
+\end{pythoncode}
+\end{exercice}

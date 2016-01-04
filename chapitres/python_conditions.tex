@@ -1,0 +1,748 @@
+% !TEX root = ../memo/python_memo.tex
+% !TEX encoding = UTF-8 Unicode
+% creation: 2015-10-01
+
+
+\chapter{Structures conditionnelles}
+
+Lors de l'exécution d'un programme, les instructions sont interprétées pas à pas,
+dans l'ordre où elles ont été écrites~: c'est le \textit{flux d'instructions}. Dans ce chapitre,
+nous allons apprendre à maîtriser ce flux.
+
+\section{Booléens}
+
+Il existe un type de variable particulier qui ne peut stocker que deux valeurs possibles. On les
+appelle des variables \textit{booléennes}\footnote{En mémoire de Georges \textsf{Boole},
+mathématicien anglais du XIX\ieme{} qui a imaginé une algèbre qui utilise ce type de variable
+(voir \url{https://fr.wikipedia.org/wiki/George_Boole}
+pour plus d'informations.\index{Boole, George})}
+Ces deux valeurs sont représentés par Python par les mots clés \motcle{True}
+ou \motcle{False}\footnote{Python interprète aussi $0$ comme \texttt{False}
+et $1$ comme \texttt{True}.}.
+
+On utilise ces variables pour manipuler le résultats de tests, par exemple des comparaisons~:
+\begin{pythoncode}
+>>> 5 > 3
+True
+>>> -7 > -3
+False
+\end{pythoncode}
+
+Les tests disponibles sont~:
+\vspace*{-3mm}
+\begin{multicols}{2}
+\begin{itemize}
+	\item plus grand \motcle{>}
+	\item plus petit \motcle{<}
+	\item plus grand ou égal \motcle{>=}
+	\item plus petit ou égal \motcle{<=}
+	\item égal \motcle{==}
+	\item différent \motcle{!=}
+\end{itemize}
+\end{multicols}
+
+En voici la signification et la valeur~:
+
+\begin{center}
+\tabulinesep=1.5mm
+\begin{tabu}to0.9\linewidth{|>{\ttfamily}X[1,c]|X[3,l]|}
+\hline
+\textbf{\rmfamily Test} & Renvoie \texttt{True} lorsque\dots\\
+\hline
+x == y & \texttt{x} est égal à \texttt{y}\\
+x != y & \texttt{x} est différent de \texttt{y}\\
+x > y & \texttt{x} est plus grand que \texttt{y}\\
+x < y & \texttt{x} est plus petit que \texttt{y}\\
+x >= y & \texttt{x} est plus grand ou égal à \texttt{y}\\
+x <= y & \texttt{x} est plus petit ou égal à \texttt{y}\\
+\hline
+!E & L'expression booléenne \texttt{E} vaut \texttt{False}\\
+\hline
+\end{tabu}
+\end{center}
+
+\begin{remarque}
+Ne pas confondre \texttt{==} test d'égalité et \texttt{=} le signe d'affectation.
+\end{remarque}
+
+\begin{pythoncode}
+>>> "python" == "Python"
+False
+>>> "python" = "Python"
+File " <stdin> ", line 1
+SyntaxError: can't assign to literal
+\end{pythoncode}
+
+\subsection{Opérateurs booléens}
+
+Il existe des opérateurs qui agissent sur des variables booléenes\index{Opérateurs booléens}~:
+\begin{itemize}
+	\item le ET, donné par le mot clé \motcle{and};
+	\item le OU, donné par le mot clé \motcle{or}~;
+	\item le NON, donné donné par le signe \motcle{not}.
+\end{itemize}
+
+Les opérateurs \texttt{and} et \texttt{or} sont des opérateurs \textit{binaires}~: ils agissent sur
+deux opérandes.
+\begin{pythoncode}
+>>> x = 7
+>>> x < 10 and x > 3
+True
+>>> x < 0 or x > 5
+True
+\end{pythoncode}
+
+L'opérateur \texttt{not} est un opérateur \textit{unaire} qui n'agit que sur un seul opérande et
+prend son contraire~:
+
+\begin{pythoncode}
+>>> not(True)
+False
+>>> x = 8
+>>> not(x == "8")   # x est le _nombre_ 8 donc n'est pas égal à la chaîne "8"
+True
+\end{pythoncode}
+
+On résume les valeurs possibles de ces opérateurs dans des \textit{tables de v\'{e}rit\'{e}s}
+\index{Tables de vérité} qui donnent
+de manière exhaustive tous les cas possibles.
+
+\begin{multicols}{3}
+{\footnotesize
+\colorlet{head}{mainColor!30}
+\tabulinesep=1.5mm
+\begin{tabu}to\linewidth{|*{2}{X[c,1]}|X[c,2]|}
+\hline
+\taburowcolors 1{head .. head}
+\texttt{A} & \texttt{B} & \texttt{A and B}\\
+\hline
+\taburowcolors 1{white .. white}
+\texttt{False} & \texttt{False} & \texttt{False}\\
+\texttt{False} & \texttt{True} & \texttt{False}\\
+\texttt{True} & \texttt{False} & \texttt{False}\\
+\texttt{True} & \texttt{True} & \texttt{True}\\
+\hline
+\end{tabu}
+
+\begin{tabu}to\linewidth{|*{2}{X[c,1]}|X[c,2]|}
+\hline
+\taburowcolors 1{head .. head}
+\texttt{A} & \texttt{B} & \texttt{A or B}\\
+\hline
+\taburowcolors 1{white .. white}
+\texttt{False} & \texttt{False} & \texttt{False}\\
+\texttt{False} & \texttt{True} & \texttt{True}\\
+\texttt{True} & \texttt{False} & \texttt{True}\\
+\texttt{True} & \texttt{True} & \texttt{True}\\
+\hline
+\end{tabu}
+
+\begin{tabu}to\linewidth{|X[c,1]|X[c,2]|}
+\hline
+\taburowcolors 1{head .. head}
+\texttt{A} & \texttt{not(A)}\\
+\hline
+\taburowcolors 1{white .. white}
+\texttt{False} & \texttt{True}\\
+\texttt{True} & \texttt{False}\\
+\hline
+\end{tabu}
+}
+\end{multicols}
+
+\begin{exercice}
+Traduire par des tests sur la variable $x$ l'appartenance aux ensemble de nombres suivants~:
+
+\tabulinesep=1.5mm
+\begin{tabu}to0.95\linewidth{*{4}{X[l,1]}}
+$\RR^*_+$ & $\into34$ & $\intfo{5}{+\infty}$ & $\intf2{10}\cap\intfo{4}{7}$
+\end{tabu}
+\end{exercice}
+
+\section{Déroulement d'un programme}
+
+\subsection{Séquence d'instructions}
+
+Jusqu'à présent, les lignes de codes que nous avons utilisées se sont exécutées dans un ordre
+\textit{séquentiel}, c'est-à-dire chronologique, linéaire, les commandes s'éxécutant dans l'ordre
+où elles ont été saisies ou dans l'ordre où elles apparaissent dans le script
+(voir figure \ref{python:conditions:figures:sequence}).
+
+\begin{figure}[h]
+\caption{Une séquence de commandes}\label{python:conditions:figures:sequence}
+\centering
+\begin{tikzpicture}
+\matrix (m) [matrix of nodes,column sep=5mm, row sep=10mm]
+{ 	\node[text centered] (d) {Début}; \\
+	\node[block] (cmd1) {Instruction 1}; \\
+	\node[block] (cmd2) {Instruction 2}; \\
+	\node[block] (cmd3) {Instruction 3}; \\
+	\node (fin) {\dots{}};\\
+};
+\begin{scope}[every path/.style={connexion}]
+\path (d) -- (cmd1);
+\path (cmd1) -- (cmd2);
+\path (cmd2) -- (cmd3);
+\path (cmd3) -- (fin);
+\end{scope}
+\end{tikzpicture}
+\end{figure}
+
+
+Il est possible de changer ce flux linéaire par des éléments de code qui s'appellent des
+\textit{structures de contrôle}. Il en existe de deux types~: la \textit{sélection}
+(ou \textit{éxécution conditionnelle}) et la \textit{répétition}.
+
+
+%=================== IF ====================================================
+
+\subsection{Exécution conditionnelle}\label{python:conditions:if}
+
+Lors d'une exécution conditionnelle, on exécute un \textit{test}. Si le test est vrai
+ (la condition prend la valeur \texttt{True}), une partie du code (bloc de code) va être exécutée.
+ Si le test est faux (\texttt{False}), cette même partie du code va être ignorée
+ (voir figure \ref{python:conditions:figures:if}).
+
+ \begin{figure}[h]
+	\caption{\textbf{Une exécution conditionnelle}~: si la condition est vrai, l'instruction A
+est exécutée, sinon, elle est ignorée.}\label{python:conditions:figures:if}
+\centering
+\begin{tikzpicture}
+\matrix (m) [matrix of nodes,column sep=5mm, row sep=10mm]
+{ 	\node[text centered] (d) {\dots{}};		& \\
+	\node[condition] (test) {Condition}; 		& \node (n1) {};\\
+	\node[block] (cmd2) {Instruction A};	&  \\
+	\node[block] (cmd3) {Instruction B};	& \node (n2) {};\\
+	\node (fin) {\dots{}};\\
+};
+\begin{scope}[every path/.style={connexion}]
+\path (d) -- (test);
+\path (test) -- (cmd2) node[pos=0.1, left, focusColor] {\footnotesize \texttt{True}};
+\path (cmd2) -- (cmd3);
+\path (cmd3) -- (fin);
+\path (test) -- (n1.north) node[pos=0.3, above, focusColor] {\footnotesize \texttt{False}}
+	-- (n2.north) -- (cmd3);
+\end{scope}
+\end{tikzpicture}
+\end{figure}
+
+En Python, c'est le mot clé \motcle{if} qui va nous servir à décider si une partie du code va être
+exécuté ou pas. \texttt{if} sera suivi d'une expression booléenne (qu'on mettra entre parenthèses
+pour plus de lisibilité) et de deux points (\texttt{:}).
+
+Ensuite, pour faire comprendre à Python quelles tâches doivent être exécutées sous cette condition,
+ on \textit{indente}\index{Indentation} les lignes de code relatives à ces tâches
+ \footnote{comme pour les fonctions, voir section \ref{python:fonctions} page \pageref{python:fonctions}},
+ c'est-à-dire qu'on insére au début de chaque ligne 4 espaces.
+On obtient ainsi sous la ligne déclarant la condition, une série de lignes décalées vers la droite~:
+ on a définit un \textit{bloc de code}\index{Bloc} ou \textit{bloc d'instructions}. Toutes les lignes ayant
+ le même  retrait font partie du même bloc. Ce bloc de code ne sera lu et exécuté par l'interpréteur
+  que si l'expression booléenne est égale \texttt{True}, autrement dit que si la condition est vraie.
+   Dans le cas contraire (l'expression booléenne a pour valeur \texttt{False}), ce bloc de code est
+   ignoré par l'interpréteur.
+
+\begin{multicols}{2}
+\begin{pythonexemple}
+a = 20
+if (a > 10) :
+    print("a est plus grand que 10")
+\end{pythonexemple}
+
+\begin{result}
+a est plus grand que 10
+\end{result}
+\end{multicols}
+
+Dans le code ci-dessus, l'exécution de la ligne 2 provoque l'évaluation de l'expression boolénne
+\texttt{a~>~10}. Si cette expression est vraie, le bloc qui suit ligne 3 est exécuté.
+Si elle est fausse, le bloc est ignoré.
+
+On peut indiquer à Python d'exécuter un autre bloc si le test échoue (voir figure \ref{python:conditions:figures:ifelse}).
+
+ \begin{figure}[h]
+\caption{\textbf{Une autre exécution conditionnelle}~: si la condition est vrai, l'instruction
+{\ttfamily $\text{A}_{\text{vrai}}$}
+est exécutée, sinon, l'instruction {\ttfamily $\text{A}_{\text{faux}}$} est exécutée.}\label{python:conditions:figures:ifelse}
+\centering
+\begin{tikzpicture}
+\matrix (m) [matrix of nodes,column sep=5mm, row sep=10mm]
+{ 	\node[text centered] (d) {\dots{}};		& \\
+	\node[condition] (test) {Condition}; 		&\\
+	\node[block] (vrai) {Instruction $\text{A}_{\text{vrai}}$};
+		&   \node[block] (faux) {Instruction $\text{A}_{\text{faux}}$};\\
+	\node[block] (cmd3) {Instruction B};	& \\
+	\node (fin) {\dots{}};\\
+};
+\begin{scope}[every path/.style={connexion}]
+\path (d) -- (test);
+\path (test) -- (vrai) node[pos=0.1, left, focusColor] {\footnotesize \texttt{True}};
+\path (vrai) -- (cmd3);
+\path (cmd3) -- (fin);
+\path (test) -| (faux) node[pos=0.1, above, focusColor] {\footnotesize \texttt{False}};
+\path (faux) |- (cmd3);
+\end{scope}
+\end{tikzpicture}
+\end{figure}
+
+
+On utilise pour cela
+l'instruction \motcle{else} (suivie de deux points \texttt{:}).
+Le principe est toujours le même, on indente les lignes de codes
+pour définir le bloc qui devra être exécuté si le test du \texttt{if} est faux.
+
+\begin{multicols}{2}
+\begin{pythonexemple}
+a = 3
+if (a > 5) :
+    print("a supérieur à 5")
+else:
+    print("a inférieur ou égal à 5")
+\end{pythonexemple}
+
+\begin{result}
+a inférieur ou égal à 5
+\end{result}
+\end{multicols}
+
+Dans le code ci-dessus, le test de la ligne 2 échoue~: c'est donc le bloc de code sous l'instruction
+\texttt{else} qui est exécuté.
+
+\begin{exercice}
+\begin{enumerate}\label{python:conditions:exos:divisible}
+\item Écrire une fonction \texttt{divisible\_par\_3} qui détermine si un nombre est divisible par~$3$.
+Elle devra retourne \texttt{True} si le nombre est divisible par trois et \texttt{False} dans le cas contraire.
+\item Écrire un programme qui demande à l'utilisateur un nombre et qui affiche s'il est divisible par trois ou pas. Ce programme devra utiliser la fonction définie à la question précédente.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}
+Écrire un programme \texttt{bizarre.py} qui additionne deux variables \texttt{x} et \texttt{y}
+si leur différence est paire et qui les soustrait sinon.
+Les nombres entiers seront  demandés directement à l'utilisateur.
+
+Le résultat sera affiché.
+\end{exercice}
+
+On peut enchaîner les exécutions conditionnelles, c'est-à-dire imbriquer les tests les uns dans les
+autres(voir figure \ref{python:conditions:figures:ifelseif}).
+
+\begin{figure}[h]
+\caption{\textbf{Enchaînement d'exécutions conditionnelles}~: si la condition 1 échoue, on teste
+la condition 2, si elle échoue aussi, on teste la condition 3, etc. (Les instructions $A_n$
+ pour $n>1$ ne sont pas obligatoires).}\label{python:conditions:figures:ifelseif}
+\centering
+\begin{tikzpicture}
+\matrix (m) [matrix of nodes,column sep=5mm, row sep=10mm]
+{ 	\node[text centered] (d) {\dots{}};		& & &\\
+	\node[condition] (test1) {Condition 1};
+		& \node[condition] (test2) {Condition 2};
+			& \node[condition] (test3) {Condition 3}; &\\
+	\node[block] (vrai1) {Instruction A1};
+		& \node[block] (vrai2) {Instruction A2};
+			& \node[block] (vrai3) {Instruction A3};
+				& \node[block] (vrai4) {Instruction A4};\\
+	\node[block] (cmd3) {Instruction B};	& & &\\
+	\node (fin) {\dots{}};\\
+};
+\begin{scope}[every path/.style={connexion}]
+\path (d) -- (test1);
+\path (test1) -- (vrai1) node[pos=0.1, left, focusColor] {\footnotesize \texttt{True}};
+\path (test2) -- (vrai2) node[pos=0.1, left, focusColor] {\footnotesize \texttt{True}};
+\path (test3) -- (vrai3) node[pos=0.1, left, focusColor] {\footnotesize \texttt{True}};
+\path (vrai1) -- (cmd3);
+\path (cmd3) -- (fin);
+\path (test1) -- (test2) node[midway, above, focusColor] {\footnotesize \texttt{False}};
+\path (test2) -- (test3) node[midway, above, focusColor] {\footnotesize \texttt{False}};
+\path (test3) -| (vrai4) node[pos=0.1, above, focusColor] {\footnotesize \texttt{False}};
+\path (vrai2) |- (cmd3);
+\path (vrai3) |- (cmd3);
+\path (vrai4) |- (cmd3);
+\end{scope}
+\end{tikzpicture}
+\end{figure}
+
+\begin{pythonexemple}
+a = 5
+if (a > 10):
+    if (a % 2 == 0):
+        print "a est un nombre pair plus grand que 10"
+    else:
+        print "a est un nombre impair plus grand que 10"
+else:
+    if (a % 2 == 0):
+        print "a est un nombre pair plus petit que 10"
+    else:
+        print "a est un nombre impair plus petit que 10"
+\end{pythonexemple}
+
+\begin{result}
+a est un nombre impair plus petit que 10
+\end{result}
+
+
+
+
+\begin{exercice}
+Une équation du second degré à coefficients réels peut s'écrire sous la forme~:
+\[ax^2+bx+c=0\]
+On prouve que cette équation admet soit deux solutions, soit une unique solution, soit aucune
+solution suivant le signe du \textit{discriminant} de l'équation que l'on calcule avec~:
+\[\Delta = b^2-4ac\]
+On peut résumer la situation par le tableau suivant~:
+\begin{center}
+\tabulinesep=1.5mm
+\begin{tabu}to0.9\linewidth{|X[1,c]|X[3,l]|}
+\hline
+\text{Signe de } $\Delta$ & Solutions \\
+\hline
+$\Delta > 0$ & Deux solutions~: $x_1=\dfrac{-b+\sqrt{\Delta}}{2a}$ et $x_2=\dfrac{-b-\sqrt{\Delta}}{2a}$\\
+$\Delta = 0$ & Une seule solution~: $x_0=\dfrac{-b}{2a}$\\
+$\Delta < 0$ & Pas de solution réelle. \\
+\hline
+\end{tabu}
+\end{center}
+Écrire un programme \texttt{bynome.py} qui demande à l'utilisateur trois nombres correspondant aux
+coefficients $a$, $b$ et $c$ de l'équation et qui indique les valeurs décimales de la (ou des)
+solution(s) lorsqu'elles existent. Votre programme devra afficher \texttt{"Pas de solution réelle"}
+ dans le cas où l'équation n'admet pas de solution.
+\end{exercice}
+
+\begin{exercice}
+Soit $f$ une fonction affine par morceaux définie sur $\RR$ par~:
+\[f(x)=
+\begin{cases}
+-2x+3 & \text{si } x\in\intof{-\infty}{-5}\\
+13 & \text{si } x\in\intof{-5}{8}\\
+x+5 & \text{si } x\in\into8{+\infty}
+\end{cases}
+\]
+Définir une fonction \texttt{f} prenant comme paramètre \texttt{x} pour la variable $x$ et
+qui retourne la valeur de $f(x)$ suivant celle de $x$.
+\end{exercice}
+
+
+
+%=================== BOUCLES ====================================================
+
+\subsection{Répétitions}
+On peut changer le flux linéaire d'un programme en répétant une instruction ou un bloc d'instructions
+On appelle cela une \nouveau{boucle}. Pour ce faire, on dispose de deux procédés assez différents
+dans l'approche.
+
+\subsubsection{Répétition basée sur une condition}
+On utilise l'instruction \motcle{while}, suivi d'une expression boolénne, suivie de deux points
+ (~\texttt{:}). On désigne comme d'habitude le bloc d'instructions à répéter par des indentations,
+ comme dans le cas des exécutions conditionnelles \texttt{if} (voir section \ref{python:conditions:if}
+ page \pageref{python:conditions:if}).
+
+ \begin{figure}[h]
+\caption{\textbf{Répétition sous condition}~: si la condition est vrai, l'instruction A
+est exécutée et on évalue à nouveau la condition. Lorsque la condition est fausse
+ on continue le programme sans exécuter l'instruction A. \textit{Remarquez que l'instruction A
+ n'est pas chaînée directement avec l'instruction B}.}\label{python:conditions:figures:while}
+\centering
+\begin{tikzpicture}
+\matrix (m) [matrix of nodes,column sep=5mm, row sep=10mm]
+{ 	& \node[text centered] (d) {\dots{}};		& \\
+	& \node[condition] (test) {Condition}; 		& \node (dTest) {};\\
+	\node (gCmdA) {}; & \node[block] (cmdA) {Instruction A};	&  \\
+	& \node[block] (cmdB) {Instruction B};	& \node (dCmdB) {};\\
+	& \node (fin) {\dots{}};\\
+};
+\begin{scope}[every path/.style={connexion}]
+\path (d) -- (test);
+\path (test) -- (cmdA) node[pos=0.1, left, focusColor] {\footnotesize \texttt{True}};
+\path (cmdA) -- (gCmdA.north) |- (test);
+\path (cmdB) -- (fin);
+\path (test) -- (dTest.north) node[pos=0.3, above, focusColor] {\footnotesize \texttt{False}}
+	-- (dCmdB.north) -- (cmdB);
+\end{scope}
+\end{tikzpicture}
+\end{figure}
+
+ Tant que la condition du \texttt{while} est vraie (valeur \texttt{True}), le bloc est exécuté.
+ Dès que cette même condition devient fausse, le bloc est ignoré et on passe à la suite du programme
+ (voir figure \ref{python:conditions:figures:while}).
+
+ Prenons un exemple~:
+
+ \begin{multicols}{2}
+\begin{pythonexemple}
+x = 1
+while (x < 5):
+    print(x)
+    x = x + 1
+\end{pythonexemple}
+
+\begin{result}
+1
+2
+3
+4
+\end{result}
+\end{multicols}
+
+Éxaminons le code ci-dessus. À la ligne 1, la variable \texttt{x} est initialisée.
+Puis on rencontre l'instruction \texttt{while}\index[cmd]{while}
+et Pyhton évalue l'expression booléenne \texttt{x < 5}. Si cette expression est vraie, Python
+exécute le bloc d'instruction qui suit~: ligne 3, on affiche \texttt{x} et ligne 4 on ajoute
+\texttt{1} à la variable \texttt{x} (mise à jour de \texttt{x}). Et on revient au test précédent.
+Tant que l'expression booléenne est vraie, on exécute le bloc d'instructions (lignes 3 et 4).
+
+On parle donc de \textit{boucle} et les lignes 3 et 4 sont appelées \textit{corps de la boucle}.
+Chaque passge dans la boucle (c'est à dire chaque exécution du corps de la boucle) s'appelle
+une \nouveau{itération}.
+\medskip
+
+Il est primordial lorsqu'on demande à Python de faire une boucle de prendre garde à trois choses~:
+\begin{itemize}
+\item Initialiser \textbf{hors de la boucle} la (ou les) variables du test sinon le test échouera.
+\item Mettre à jour \textbf{dans la boucle} la (ou les) variable(s) du test sinon la variable
+reste figée et le corps de boucle est exécuté une infinité de fois
+\footnote{Si vous avez fait une boucle infinie, pas de panique~!
+Il suffit d'appuyer sur la séquence de touches \touche{Ctrl}+\touche{C} pour arrêter le programme}.
+\item Bien vérifier que le test peut être évalué comme \texttt{False} au cours de l'exécution
+de la boucle sinon, elle sera répétée une infinité de fois.
+\end{itemize}
+
+
+\begin{exercice}\label{python:conditions:exos:tableau}
+On considère la fonction $f$ définie sur $\RR\setminus\left\{\frac{1}{2}\right\}$ par
+ $f\,: x \longmapsto \frac{x+5}{2x-1}$
+
+Écrire un programme Python \texttt{tableau.py} qui permettra de remplir ce tableau de valeurs~:
+
+\begin{center}
+\tabulinesep=1.5mm
+\begin{tabu}to0.95\linewidth{|X[c,1]*{12}{|>{\footnotesize }X[c,1]}|}
+\hline
+$x$ & $-3,5$ & $-3$ & $-2,5$ & $-2$ & $-1,5$ & $-1$ & $-0,5$ & $0$ & $1$ & $1,5$ & $2$ & $2,5$ \\
+\hline
+$f(x)$ & & & & & & & & & & & & \\
+\hline
+\end{tabu}
+\end{center}
+
+On utilisera une fonction Python nommée \texttt{f()} et une boucle dans ce programme.
+
+\end{exercice}
+
+\begin{exercice}
+\item Le programme ci-dessous est sensé calculer la somme %\[s=\sum_{k=1}^M \dfrac1k\]
+\[s=\dfrac11+\dfrac12+\ldots+\dfrac1M\] mais il ne fonctionne pas correctement.
+En réalité, il contient quatre erreurs.
+
+Réécrire le programme afin qu'il affiche le résultat souhaité.
+
+\begin{pythonexemple}
+s=0; k=1; M=100
+while (k < M)
+    s += 1/k
+print s
+\end{pythonexemple}
+\end{exercice}
+
+\begin{exercice}
+On considère la suite $(u_n)_{n\in\NN}$ définie par
+
+\[\begin{cases}
+u_0=0\\
+u_{n+1} = f(u_n) \text{ pour } n \in \NN^*\\
+\end{cases}\]
+où $f$ est la fonction définie à l'exercice \ref{python:conditions:exos:tableau}.
+
+Écrire un programme \texttt{suite.py} qui donne la valeur des premiers termes de la suite
+pour $n\geqslant10$.
+\end{exercice}
+
+\begin{exercice}
+On reprend l'exercice \ref{python:conditions:exos:divisible}
+page \pageref{python:conditions:exos:divisible}.
+
+À l'aide d'une boucle, modifier le programme précédent afin qu'une fois affichée la réponse,
+l'ordinateur demande à l'utilisateur s'il veut recommencer ou pas.
+\end{exercice}
+
+\begin{exercice}\label{python:conditions:exos:factorielle}
+Pour tout nombre entier $n$, on désigne par $n!$ la \textit{factorielle} du nombre $n$ qui est
+définie par~:
+\[n!=
+\begin{cases}
+1 & \text{pour } n = 0\\
+1\times2\times\ldots\times(n-1)\times n & \text{pour } n>0
+\end{cases}
+\]
+Écrire une programme \texttt{factorielle.py} qui demande \texttt{n} à l'utilisateur et qui affiche
+ensuite la factorielle du nombre \texttt{n}.
+\end{exercice}
+
+\begin{exercice}
+Le nombre $1729$ est le plus petit nombre qui s'exprime sous la forme d'une somme de deux cubes de deux manières différentes.\medskip
+
+ Pour vérifier cette assertion, déterminer quatre distincts entiers $a$, $b$, $c$ et $d$ tels que
+\[a^3+b^3 = c^3 +d^3\]
+On utilisera quatre boucles imbriquées.
+\end{exercice}
+
+\begin{exercice}[Premier ou non~?]
+Écrire une fonction \texttt{isPrime} qui prend un nombre $N$ en ligne de commande et qui retourne \texttt{True} si ce nombre est premier  et \texttt{False} sinon.
+
+\textbf{Indication} -- Un nombre premier est un nombre plus grand que $1$ qui n'admet pour diviseur que $1$ et lui-même. Donc il suffit de prendre les nombres supérieur à $2$ et de tester s'il divise $N$ ou non. On ne peut tester que les nombres inférieur à son carré pour répondre à la question.
+\end{exercice}
+
+\begin{exercice}[Décomposition en facteurs premiers]
+\label{python:conditions:exos:decompopremiers}
+Écrire un programme qui affiche la décomposition en facteurs premiers d'un nombre entier $N$ pris en argument dans la ligne de commandes.
+
+\textbf{Indications} -- Pour répondre au problème posé, il suffit de commencer par tester la division par $2$. Tant que le reste de cette division est nul, on affiche $2$ (puisqu'il est un diviseur) et on divise $N$ par $i=2$. Puis, on ajoute $1$ à $i$ et on recommence, ainsi de suite jusqu'à ce que $i$ soit inférieur ou égal à $N/i$. Si le nombre $N$ à la sortie de la boucle reste plus grand que $1$, cela signifie qu'il est premier et doit être affiché.
+\end{exercice}
+
+\subsubsection{Répétition basée sur le nombre d'itérations}
+\label{python:conditions:instructions:for}
+Lorsqu'on connait à l'avance le nombre d'itérations dans une boucle, on peut utiliser une autre
+instruction~: \motcle{for}, assortie de la fonction \motcle{range} qui permettra de préciser
+l'intervalle sur lequel sont basées les itérations. Comme pour l'instruction \texttt{while}
+(et comme toujours), on désigne le bloc d'instructions à répéter par une indentation.
+
+\begin{pythoncode}
+>>> for x in range(1, 5) :
+...   print x
+...
+1
+2
+3
+4
+\end{pythoncode}
+
+On voit que la borne supérieure de l'intervalle est exclue (cela correspond à l'intervalle
+mathématiques $\intfo15$).
+
+Si on souhaite commencer à $0$, on a pas besoin de préciser la borne
+inférieure de l'intervalle et pour le coup \texttt{range(5)} décide bien de 5 itérations.
+
+\begin{pythoncode}
+>>> for x in range(5) :
+...   print(x)
+...
+0
+1
+2
+3
+4
+\end{pythoncode}
+
+Un troisième paramètre de la fonction \texttt{range()} règle le pas des itérations~:
+
+\begin{pythoncode}
+>>> for x in range(0, 50, 10) :
+...    print(x)
+...
+0
+10
+20
+30
+40
+\end{pythoncode}
+
+
+\begin{exercice}
+Écrire un programme \texttt{moyenne.py} qui demande à l'utilisateur une série de nombre
+et qui calcule la moyenne de ces nombres. Le programme devra demander en premier lieu à
+l'utilisateur combien il désire saisir de nombres.
+La sortie de votre programme pourra ressembler à cela~:
+\begin{result}
+Combien de nombres souhaitez vous saisir : 0
+Je ne peux rien pour vous !
+Combien de nombres souhaitez vous saisir : 4
+Saisir nombre #1 : 15
+Saisir nombre #2 : 9
+Saisir nombre #3 : 12
+Saisir nombre #4 : 17
+La moyenne de ces nombres vaut : 13.25
+\end{result}
+\end{exercice}
+
+
+\begin{exercice}[Calcul de PGCD]
+\begin{enumerate}
+	\item Écrire une fonction \texttt{pgcd\_soustractions()} qui prendra deux paramètres \texttt{a} et
+	\texttt{b} et qui retournera le PGCD de ces deux nombres calculé à l'aide de l'algorithme des
+	soustractions successives.
+	\item Écrire une fonction \texttt{pgcd\_euclide()} qui prendra deux paramètres \texttt{a} et
+	\texttt{b} et qui retournera le PGCD de ces deux nombres calculé à l'aide de l'algorithme
+	d'Euclide.
+	\item Utiliser une des deux fonctions ci-dessus pour écrire une fonction \texttt{ppe()} qui
+	prendra deux paramètres \texttt{a} et \texttt{b} qui retournera \texttt{True} si ces deux
+	nombres sont premiers entre eux.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}
+On rappelle que le \textit{coefficient binomial} $n \choose k$ (ou $C_n^k$) donne le nombre
+de parties de $k$ éléments dans un ensemble à $n$ éléments. Sa valeur est donnée par la formule~:
+\[{n \choose k} = C_n^k\, = \frac{n!}{k!(n-k)!}\]
+Écrire une fonction \texttt{coef\_binomial()} qui prendra deux paramètres
+\texttt{k} et \texttt{n} qui retournera la valeur du coefficient binomial correspondant.
+\textit{On pourra réinvestir le résultat de l'exercice \ref{python:conditions:exos:factorielle}}.
+\end{exercice}
+
+\begin{exercice}[Suite de Fibonacci]
+On note $F_n$ le terme de rang $n$ de la suite définie par~:
+\[
+\begin{cases}
+F_1 = 1\\
+F_2 = 1 \\
+F_{n+2} = F_{n+1} + F_n \text{ pour tout } n>0\\
+\end{cases}
+\]
+Écrire une fonction qui calcule $F_n$ pour un $n>0$ donné.
+\end{exercice}
+
+\begin{exercice}
+À l'aide des boucles, écrire un programme qui affiche les motifs suivants (deux boucles imbriquées
+pour le motif carré). On écrira un programme par motif.
+
+\begin{multicols}{2}
+\begin{result}
+*
+**
+***
+****
+*****
+******
+\end{result}
+
+\begin{result}
+*
+**
+***
+****
+*****
+****
+***
+**
+*
+\end{result}
+
+\begin{result}
+* * * * * *
+* * * * * *
+* * * * * *
+* * * * * *
+* * * * * *
+* * * * * *
+\end{result}
+
+\begin{result}
+*        *
+**      **
+***    ***
+****  ****
+**********
+****  ****
+***    ***
+**      **
+*        *
+\end{result}
+\end{multicols}
+\end{exercice}

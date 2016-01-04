@@ -1,0 +1,538 @@
+% !TEX root = ../memo/python_memo.tex
+% !TEX encoding = UTF-8 Unicode
+% creation: 2015-09-16
+
+
+\chapter{Variables}
+
+Dans certains cas, on peut avoir besoin d'un nombre plusieurs fois dans un programme. Plutôt
+que d'avoir à le retaper à chaque fois son expression, Python nous propose un moyen simple
+de manipuler les nombres~: les \textit{variables}\index{Variable}.
+
+\section{Notion de variable}
+\begin{enumerate}
+\item Une variable est basiquement une boîte avec une étiquette
+(voir figure \ref{python:variables:figures:declaration}). Côté utilisateur~: c'est
+l'étiquette, \cad{} le nom de la variable.
+Côté ordinateur~: c'est la boîte, en fait une adresse mémoire.
+On peut faire appel à la fonction \motcle{id()} pour voir cette adresse mémoire\index{Adresse mémoire}.
+\item Différent \textit{types}\index{Type (variable)}~: entier, réel, chaîne de caractères, liste, etc.
+La fonction \motcle{type()} renseigne sur le type d'une variable.
+\item Typage automatique~: en fonction de ce que l'on met dans la boîte, Python sait ce qu'il a le
+droit de faire avec.
+\item Il faut respecter un certain nombre de règles pour nommer les variables~:
+    \begin{enumerate}
+    \item caractères ou chiffre ou tiret-bas (\_) seulement,
+    \item le premier caractère est obligatoirement une lettre,
+    \item sensible à la casse (\texttt{chaine} et \texttt{Chaine} sont deux variables différentes)
+    \item certains mots sont dits \textit{réservés}~: ils désignent des commandes Python et ne
+    pas être utilisés comme nom de variables. On peut les connaître depuis l'interpréteur
+    directement~:
+\begin{pythoncode}
+>>> import keyword
+>>> keyword.kwlist
+['False', 'None', 'True', 'and', 'as', 'assert', 'break', 'class', 'continue', 'def', 'del', 'elif', 'else', 'except', 'finally', 'for', 'from', 'global', 'if', 'import', 'in', 'is', 'lambda', 'nonlocal', 'not', 'or', 'pass', 'raise', 'return', 'try', 'while', 'with', 'yield']
+\end{pythoncode}
+    \end{enumerate}
+\end{enumerate}
+
+
+
+\section{Affectations}
+Avec Python, on déclare la variable en même temps qu'on lui attribue une valeur. En reprenant
+l'analogie des boîtes, il n'existe pas de boîte vide~: cela n'a pas de sens de préparer des boîtes
+à l'avance avec Python, on les crée au moment où on en a besoin.
+
+\begin{figure}
+\caption{Une variable est une boîte étiquettée.}\label{python:variables}
+\centering
+\begin{subfigure}[t]{0.3\textwidth}
+	\centering
+	\begin{tikzpicture}
+	\node[boite fermee] (a) at (0,0) {\texttt{a}};
+	\end{tikzpicture}
+	\caption{Une variable \texttt{a}.}
+	\label{python:variables:figures:declaration}
+	\end{subfigure}
+	\quad
+	\begin{subfigure}[t]{0.3\textwidth}
+	\centering
+	\begin{tikzpicture}
+	\node[boite ouverte] (b) at (0,0) {\texttt{b}};
+	\node[above right=of b] (nb) {$5$};
+	\draw[-latex'] (nb) to[out=180, in=90] ($(ofg)!0.7!(ofd)$);
+	\end{tikzpicture}
+	\caption{On affecte $5$ à la variable \texttt{b}~:\linebreak \texttt{b=5}}\label{python:variables:figures:affectation}
+	\end{subfigure}
+	\quad
+	\begin{subfigure}[t]{0.3\textwidth}
+	\centering
+	\begin{tikzpicture}
+	\node[boite ouverte] (c) at (0,0) {\texttt{c}};
+	\node[above right=of c] (chaine) {\texttt{"John"}};
+	\draw[-latex'] ($(ofg)!0.7!(ofd)$) to[out=90, in=180] (chaine);
+	\end{tikzpicture}
+	\caption{On utilise la variable \texttt{c}~:\linebreak \texttt{print(c)}}\label{python:variables:figures:utilisation}
+	\end{subfigure}
+\end{figure}
+
+Pour \textit{affecter} (ou assigner) une valeur à une variable (\cad{} mettre une étiquette à une
+boîte \textbf{et} y mettre une certaine valeur, ces deux opérations se faisant en même temps, voir
+figure \ref{python:variables:figures:affectation}),
+ on utilise l'opérateur \motcle{=}.
+\begin{pythoncode}
+>>> a = 4           # Affecter la valeur 4 à la variable 'a'
+>>> id(a)           # Adresse mémoire de la variable 'a'
+140443874558720
+>>> type(a)         # Afficher le type de 'a'
+<type 'int'>
+>>> a               # Afficher la valeur de 'a' (ne marche pas dans un script)
+4
+>>> b = 5           # Affecter la valeur 5 à la variable 'b'
+\end{pythoncode}
+Si on utilise le même nom de variable plusieurs fois, c'est la dernière valeur qui est retenue,
+Python ayant jeté l'ancienne et mis l'autre à la place (voir figure \ref{python:variables:figures:utilisation2})~:
+\begin{pythoncode}
+>>> a=4
+>>> print(a)
+4
+>>> a=5
+>>> print(a)
+5
+\end{pythoncode}
+\begin{figure}[h]
+\centering
+\caption{La variable \texttt{a} contenait $4$ et on y stocke $5$~: le nombre $4$ est jeté}
+\label{python:variables:figures:utilisation2}
+	\begin{tikzpicture}
+	\node[boite ouverte] (a) at (0,0) {\texttt{a}};
+	\node[above left=of a] (new) {$5$};
+	\node[above right=of a, cross out, draw=focusColor] (old) {$4$};
+	\draw[-latex'] (new) to[out=0, in=90] ($(ofg)!0.6!(ofd)$);
+	\draw[-latex'] ($(ofg)!0.7!(ofd)$) to[out=90, in=180] (old);
+	\end{tikzpicture}
+\end{figure}
+On peut utiliser les variables dans des calculs {voir figure \ref{python:variables:figures:calculs}~:
+Python les remplace par leur valeur. S'il
+trouve une boîte marquée \texttt{a}, il l'ouvre et utilise ce qu'il trouve dedans à la place de
+\texttt{a} dans l'expression.
+\begin{pythoncode}
+>>> a * b           # Calcul avec les variables 'a' et 'b'
+20
+\end{pythoncode}
+
+\begin{exercice}
+Stocker la valeur du rayon d'un cercle dans une variable \texttt{r}.
+
+Utiliser cette variable \texttt{r} pour calculer la longueur du cercle et l'aire du disque
+correspondant.
+\end{exercice}
+
+\begin{figure}[h]
+\caption{Utilisation des variables \texttt{a} et \texttt{b} dans une opération
+puis affectation du résultat dans une
+variable \texttt{y}.\label{python:variables:figures:calculs}}
+\centering
+\begin{tikzpicture}
+\clip (-1,-0.5) rectangle (13,3.6);
+\node[boite ouverte] (a) at (0,0) {\texttt{a}};
+\node[above right=of a] (nba) {$5$};
+\draw[-latex'] ($(ofg)!0.7!(ofd)$) to[out=90, in=180]  (nba);
+\node[boite ouverte, right=3cm of a] (b) {\texttt{b}};
+\node[above left=of b.north] (nbb) {$7$};
+\draw[-latex'] ($(ofg)!0.7!(ofd)$) to[out=90, in=0] (nbb);
+\node (op) at ($(nba)!0.5!(nbb)$) {$\times$};
+\node[boite ouverte, right=5cm of b] (y) {\texttt{y}};
+\draw[-latex'] (op) to[out=60, in=125] ($(ofg)!0.7!(ofd)$);
+\end{tikzpicture}
+\end{figure}
+
+\begin{remarque}
+Pour afficher la valeur d'une variable, on peut se contenter de taper son nom dans l'interpréteur.
+Toutefois, c'est une fonctionnalité de l'interpréteur qu'on ne retrouve pas dans un programme.
+Il faut alors utiliser la fonction \motcle{print()}.
+\begin{pythoncode}
+>>> print(a)                # Afficher la valeur de la variable 'a'
+4
+\end{pythoncode}
+On peut passer autant d'arguments qu'on souhaite
+à la fonction \texttt{print()}, on les sépare par une virgule.
+\begin{pythoncode}
+>>> print("Score :", a)     # Utilisation de 'a' dans une phrase.
+Score : 4
+\end{pythoncode}
+\end{remarque}
+\begin{exercice}
+Stocker \texttt{"John"} dans la variable \texttt{name} et $23$ dans la variable \texttt{age}.
+À l'aide de ces deux variables et de la fonction \texttt{print()}, afficher la phrase
+\texttt{"John a 23 ans"}.
+\end{exercice}
+
+\subsection{Mise à jour d'une variable}
+Dans une affectation, Python évalue en premier le membre à droite du signe \motcle{=} et met
+la valeur de ce membre dans la variable. Ainsi, on peut utiliser la variable elle-même dans le
+membre de droite.
+
+Par exemple, pour augmenter la variable \texttt{a} de $1$, on fera~:
+
+\begin{pythoncode}
+>>> a=5                # on affecte 5 à a
+>>> print(a)
+5
+>>> a=a+1              # on augmente a de 1
+>>> print(a)
+6
+>>> a+=1               # raccourci...
+>>> print(a)
+7
+\end{pythoncode}
+
+\begin{exercice}
+Soit une variable \texttt{n}. On cherche à mettre à jour sa valeur. Montrer comment on peut~:
+\begin{enumerate}
+	\item Augmenter \texttt{n} de 5.
+	\item Tripler \texttt{n}.
+	\item Diviser \texttt{n} par $10$.
+\end{enumerate}
+Donner deux écritures différentes pour chaque question.
+\end{exercice}
+
+
+\subsection{Différence Variable -- Fonction}
+On peut définir une \textit{expression} à partir de variables, toutefois si une des variables de
+l'expression  change de valeur, l'expression n'est pas mise à jour. Il faudra utiliser le concept
+de \textit{fonction} (voir section \ref{fonctions} page \pageref{fonctions}).
+\begin{pythoncode}
+>>> y = 3 * a - 2 * b      # Affecter une expression à la variable 'y'
+>>> print(y)
+2
+>>> a = 2                  # Nouvelle valeur pour la variable 'a'
+>>> print(y)                # La variable 'y' n'est pas mis a jour
+2
+\end{pythoncode}
+Ci-dessus, on définit \texttt{y} en fonction de deux autres variables
+\texttt{a}  et \texttt{b}. Il y aura dans \texttt{y} la valeur de l'expression au moment où elle
+est définie. Si on change les valeurs de \texttt{a} ou \texttt{b} après, la valeur de \texttt{y}
+n'est pas affectée.
+
+\begin{remarque}
+Attention à ça~:
+\begin{pythoncode}
+>>> a = 6
+>>> b = a
+>>> print(b)
+6
+>>> a = 7
+>>> print(b)               # La variable 'b' n'est pas liée a 'a'
+6
+\end{pythoncode}
+\end{remarque}
+
+\subsection{Affectations multiples}
+Python autorise les multiples affectations, elles sont parfois une manière élégante d'aborder
+un problème. Si elles sont possibles, il faut les manipuler avec précaution car elles sont parfois
+difficile à interpréter.
+
+\begin{pythoncode}
+>>> a, b = 7, 9       # Affecte 7 a la variable 'a' et 9 a 'b'
+>>> print(a)
+7
+>>> print(b)
+9
+>>> x = y = 3         # Affecte 3 aux variables 'x' et 'y'
+>>> print(x)
+3
+>>> print(y)
+3
+\end{pythoncode}
+
+\begin{exercice}
+Dans chacun des cas suivants, prévoir ce qui est affiché en sortie puis vérifier la réponse dans
+    un interpréteur.
+    \begin{multicols}{2}
+\begin{pythonexemple}
+>>> a = 11
+>>> b = a - 7 ; a = a + 3
+>>> a, b
+\end{pythonexemple}
+
+\begin{pythonexemple}
+>>> a = 11
+>>> a += 3 ; b = a - 7
+>>> a, b
+\end{pythonexemple}
+
+\begin{pythonexemple}
+>>> a = 11
+>>> a, b = a + 3, a - 7
+>>> a, b
+\end{pythonexemple}
+
+\begin{pythonexemple}
+>>> a = 11
+>>> b, a = a - 7, a + 3
+>>> a, b
+\end{pythonexemple}
+    \end{multicols}
+\end{exercice}
+
+\begin{exercice}
+Soit \texttt{a} et \texttt{b} deux variables ayant respectivement pour valeurs $10$ et $3$.
+
+Montrer deux moyens d'échanger les valeurs de \texttt{a} et \texttt{b}.
+\end{exercice}
+
+\section{Conversions}
+Quelquefois, on a besoin de convertir une variable d'un certain type dans un autre type,
+pour pouvoir faire certaines opérations interdites avec un type mais autorisées avec un autre.
+On utilise le nom du type comme une fonction.
+
+\begin{pythoncode}
+>>> a = "3"
+>>> 2 + a          # Python ne sait pas faire ! Et il le dit !!!
+Traceback (most recent call last):
+  File " <stdin> ", line 1, in <module>
+TypeError: unsupported operand type(s) for +: 'int' and 'str'
+>>> 2 + int(a)
+5
+\end{pythoncode}
+Si on essaie d'additionner un entier avec une chaîne de caractères, on obtient un message d'erreur
+car Python ne sait pas faire. Il faut donc convertir la variable \texttt{a} qui est du type chaîne
+de caractères en entier en utilisant la fonction \motcle{int()}.
+
+Quelques fonctions de conversion utiles~: \motcle{float()} pour convertir un objet en décimal,
+\motcle{str()} pour convertir un objet en chaîne de caractères, \motcle{hex()} et \motcle{oct()}
+pour convertir un objet en nombre en base 16 ou 8 respectivement (l'objet produit est une chaîne),etc.
+
+\begin{exercice}
+Tenter de convertir en entier les chaînes de caractères suivantes~: \texttt{"78"}, \texttt{"7.8"},
+ \texttt{"7*8"}, \texttt{"nombre"}.
+
+ Interpréter les résultats.
+\end{exercice}
+
+\section{Scripts}
+En dehors de l'interpréteur qui permet d'avoir le résultat d'une ligne de commande directement,
+on peut consigner plusieurs lignes de commandes Python dans un même fichier : un \textit{script}.
+
+Un \textit{script} est de manière plus générale un fichier dans lequel on a inscrit une liste
+d'instructions dans un certain langage compréhensible par l'ordinateur. Plus spécifiquement,
+les scripts écrit en Python utilisent l'extension \texttt{*.py} comme nom de fichier,
+comme par exemple dans \texttt{test.py}.
+
+\subsection{Scripts dans IDLE}
+\begin{enumerate}
+	\item Pour \textit{éditer} un script dans IDLE, on clique sur \textsf{Fichier\,>\,Nouveau} ou
+on tape \touche{Ctrl}+\touche{N}. Une nouvelle fenêtre apparait alors. On remarque l'absence de prompt
+(pas de chevrons \texttt{>\,>\,>}) qui indique que nous ne sommes plus dans l'interpréteur mais
+dans un éditeur.
+On saisit le texte et on tape \touche{Enter} à la fin de chaque ligne.
+
+En règle générale, on fait commencer un script Python par cette ligne~:
+\begin{pythoncode}
+# -*- coding:utf8 -*-
+\end{pythoncode}
+
+Cette ligne \label{python:variables:encodage}indique à la machine quel est l'encodage utilisé
+pour écrire le script, c'est-à-dire le type de représentation numérique de chaque caractère
+\footnote{Pour plus d'informations sur le codage des caractères,
+voir \url{http://fr.wikipedia.org/wiki/Codage_de_caract\%C3\%A8res}.}.
+
+Même si elle est utile, cette ligne est optionnelle et n'est pas nécessaire à la bonne
+exécution du script.
+
+\item Pour \textit{sauvegarder} un script, on choisit \textsf{Fichier\,>\,Sauvegarder} ou on tape
+\touche{Ctrl}+\touche{S}. On choisit alors le dossier de destination\footnote{Penser à sauvegarder
+dans votre espace personnel pour retrouver votre script sur tout le réseau~!}.
+
+\item Pour \textit{exécuter} un script python depuis IDLE, on tape la touche \touche{F5} ou on choisit
+\textsf{Run\,>\,Run Module} et l'ordinateur exécute les instructions inscrites dans le script
+les unes après les autres, dans l'ordre où elles ont été écrites. Le résultat s'affiche dans une
+nouvelle fenêtre.
+\end{enumerate}
+
+\subsection{Interaction}
+On peut depuis un programme demander à l'utilisateur saisir une séquence de caractères au clavier
+et stocker la chaîne ainsi produite dans une variable. C'est la fonction \motcle{input()}.
+
+\begin{multicols}{2}
+\begin{pythonexemple}
+a=input("nombre ? ")
+print(a)
+\end{pythonexemple}
+
+\begin{result}
+nombre ? 5
+5
+\end{result}
+\end{multicols}
+
+\begin{exercice}
+Demander à l'utilisateur son nom et stocker le résultat dans \texttt{name}.
+Afficher ensuite \texttt{"Bonjour <name> !"} où \texttt{<name>} sera remplacé par le contenu de la
+variable \texttt{name} (par exemple si \texttt{name} contient \texttt{"John"}, on affichera
+\texttt{"Bonjour John !"}).
+\end{exercice}
+\begin{remarque}
+La fonction \texttt{input()} renvoie une chaîne de caractères. Il faudra convertir au besoin pour
+faire un calcul.
+
+\begin{pythonexemple}
+a=input("nombre ? ")
+print("Double :", 2*a)                # pas de convertion
+print("Vrai double :", 2*int(a))      # convertion de 'a' en entier
+\end{pythonexemple}
+
+\begin{result}
+nombre ? 5
+Double : 55
+Vrai double : 10
+\end{result}
+\end{remarque}
+
+\begin{exercice}
+Écrire un programme qui demande à l'utilisateur le rayon d'un sphère puis affiche son volume.
+On pourra reprendre la fonction écrite à l'exercice \ref{python:fonctions:exos:sphere}.
+\end{exercice}
+
+\subsection{Commentaires}
+Toute ligne d'un script ou toute fin de ligne qui commence par le caractère \motcle{\#} est ignoré
+par Python. On appelle cette ligne un \textit{commentaire} car il sert à la personne qui écrit le
+script à expliquer ce qu'elle a voulu faire.
+
+ Lorsque le commentaire comprend plusieurs lignes, on peut le mettre entre deux triples double guillemets~:
+
+\begin{pythoncode}
+"""
+Mon long commentaire sur
+plusieurs lignes ici
+"""
+
+# Cette ligne est totalement ignorée par Python
+
+print "Hello world ! " # après le dièse, c'est ignoré
+\end{pythoncode}
+\newpage{}
+
+Il faut prendre l'habitude de commenter vos programmes. On pourra prendre le code qui suit en exemple~:
+\begin{pythoncode}
+def hypotenuse(cote1, cote2):
+    """
+    Calcule la longueur d'une hypoténuse connaissant
+    les côtés de l'angle droit (passés en paramètres).
+    """
+    return math.sqrt((cote1)**2 + (cote2)**2)
+
+#---------------------- Calcul de AC -----------------------
+AB = 9      # Premier coté
+BC = -3     # deuxième côté
+
+# Afficher la longueur de longueur AC
+print hypotenuse(AB, BC)
+\end{pythoncode}
+Il faut expliquer ce que stockent les variables, donner des éléments d'explication d'un algorithme,
+dire ce que fait une fonction, etc. C'est important pour les autres qui lisent votre code mais aussi
+ pour vous-même lorsque vous reprennez un script que vous avez écrit il y a longtemps~: on ne se
+ souvient jamais de la manière dont on a traité un problème quand le code n'est pas récent.
+
+
+
+ \begin{exercice}[Jour de la semaine]
+ Écrire un programme qui demande à l'utilisateur une date (successivement le jour, le mois, l'année)
+ et qui retourne le rang du jour dans la semaine auquel correspond cette date.
+
+En prenant $m$ pour le mois, $d$ pour le jour et $y$ pour l'année (pour janvier, $m$ doit avoir la
+valeur $1$, pour février, $m$ doit avoir la valeur $2$, etc.), les formules
+\footnote{Dans ces formules, les divisions sont des divisions entières et $\mod$ est l'opération
+ \texttt{\%} en Python donnant le reste de la division entière.} suivantes (convenant
+pour le calendrier grégorien) donnent au final $d_0$ où $0$ correspond à dimanche,
+ $1$ à lundi, etc.~:
+\begin{align*}
+y_0&=y-\frac{14-m}{12}\\
+x&=y_0+\frac{y_0}4-\frac{y_0}{100}+\frac{y_0}{400}\\
+m_0&=m+12\left(\frac{14-m}{12}\right)-2\\
+d_0&=\left(d+x+\frac{31m_0}{12}\right)\mod\,7
+\end{align*}
+
+\paragraph{Exemple}
+Quel est le jour de la semaine correspondant au 14 février 2000~?
+\begin{align*}
+y_0&=2000-1=1999\\
+x&=1999+\frac{1999}4-\frac{1999}{100}+\frac{1999}{400}=2483\\
+m_0&=2+12\times1-2=12\\
+d_0&=\left(14+3483+\frac{31\times12}{12}\right)\mod7=2500\mod7=1
+\end{align*}
+La réponse est donnée par $d_0=1$ donc le 14 février 2000 était un lundi.
+ \end{exercice}
+\newpage{}
+ \begin{exercice}[Distance parcourue par un objet] On souhaite écrire un programme qui calcule
+ la distance parcourue par un objet dans certaines conditions.
+ \begin{enumerate}
+ 	\item La distance parcourue en mètres après $t$ secondes par un objet lancé en ligne droite à la vitesse
+ $v_0$ (en mètres par seconde) depuis une position initiale $x_0$ (en mètres) est donné par
+ l'expression $x_0+v_0t+\dfrac{gt^2}2$ où $g$ est une constante (accélération de la pesanteur)
+ égale à environ $ 9,806\,65$.
+
+ Écrire un programme qui demande à l'utilisateur les trois valeurs $x_0$, $v_0$ et $t$ et calcule
+ la distance parcourue correspondante.
+ \item En réalité, l'accélération de la pesanteur $g$ dépend de la latitude $L$ (mesurée en radians)
+  et de l'altitude $h$ (mesurée en mètre). La formule suivante donne une valeur approchée de la valeur
+   de $g$ en fonction de la latitude et de l'altitude faible en regard du rayon terrestre~:
+\[ g=9,780327\times \left (1+5,3024\times10^{-3}\times\sin^2(L)-5,8\times10^{-6}\times \sin^2(2\times L)-3,086\times10^{-7}\times h\right )\]
+Modifier le programme précédent pour qu'il prenne en compte cette formule en demandant la latitude
+$L$ en degrés
+\footnote{Pour information, Paris est à une latitude égale à $48,85341\degres{}\,\text{N}$,
+Varsovie $52,22977\degres{}\text{N}$ et San Francisco $37,77493\degres{}\text{N}$.}
+et l'altitude $h$ à l'utilisateur.
+ \end{enumerate}
+ Penser à écrire des fonctions pour les différents calculs et aussi à utiliser les fonctions de
+ convertion (\texttt{float()}, \texttt{math.degrees()}, etc.)
+ \end{exercice}
+
+ \begin{exercice}[Coordonnées polaires]
+ Écrire un programme qui demande à l'utilisateur les coordonnées cartésiennes d'un point du plan
+ (dans un repère orthonormé) puis qui affiche la conversion  en coordonnées polaires de ce même
+ point (voir figure  ci-dessous).
+\begin{multicols}{2}
+\begin{center}% Repère avec base vectorielle
+\footnotesize
+\begin{tikzpicture}[scale=0.7]
+\def\ech{1}
+\def\Xmin{-0.8}
+\def\Xmax{4.8}
+\def\Ymin{-0.8}
+\def\Ymax{3.8}
+% grille
+\draw[thin, LightGray] (\Xmin*\ech,\Ymin*\ech) grid[step=5*\ech mm] (\Xmax*\ech,\Ymax*\ech);
+% axes
+\draw[-latex'] (\Xmin*\ech,0) -- (\Xmax*\ech,0);
+\draw[-latex'] (0,\Ymin*\ech) -- (0,\Ymax*\ech);
+% base vectorielle
+\draw[thick, -stealth'] (0,0) node[below left] {$O$}
+	-- (\ech,0) node[below, midway] {$\overrightarrow{i}$};
+\draw[thick, -stealth'] (0,0) -- (0,\ech) node[left, midway] {$\overrightarrow{j}$};
+% graduations
+% à faire !!!
+\draw[Crimson, dashed] (4*\ech,0) -- (4*\ech,3*\ech) node[above right] {$M$} node[midway, right] {$y$}
+	--(0,3*\ech) node[midway, above] {$x$};
+
+\draw[DarkGreen] (0,0) -- (4*\ech,3*\ech) node[midway, above, sloped] {$\rho$};
+\coordinate (M) at (4*\ech,3*\ech);
+\coordinate (O) at (0,0);
+\coordinate (I) at (\ech, 0);
+\markangle[DarkGreen]{I}{O}{M}{$\theta$}{6};
+\end{tikzpicture}
+\end{center}
+\columnbreak
+Dans un repère $\Oij$, on peut repérer un point $M$ avec ses coordonnées cartésiennes $\coord Mxy$
+ou avec des coordonnées polaires $\coord M{\rho}{\theta}$ où $\rho=OM$ et
+$\theta=\left(\vect{i}, \ora{OM}\right)$ en radians.
+
+
+\end{multicols}
+\textbf{Indications}~:
+On pourra utiliser une fonction pour calculer la distance entre deux points
+connaissant leurs coordonnées cartésiennes ainsi que la fonction
+\texttt{math.atan2(y,x)} qui retourne la valeur en radians comprise entre $-\pi$ et $\pi$ de l'angle
+ $\left(\vect{i}, \ora{OM}\right)$ où $\coord Mxy$ dans $\Oij$.
+ \end{exercice}

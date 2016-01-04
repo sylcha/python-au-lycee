@@ -1,0 +1,199 @@
+%!TEX option = --shell-escape
+% !TEX encoding = UTF-8 Unicode
+% creation : 2015-08-29
+% fichier : python_memo.tex
+%
+% document maitre du memo python pour les lyceens
+%
+\documentclass[svgnames]{memo}
+
+% coloration syntaxique du code python (nécessite le package 'minted' fonctionnel)
+\usepackage{tcolorbox}
+\tcbuselibrary{minted,skins}
+% environnement 'pythoncode'
+\newtcblisting{pythoncode}{listing engine=minted,minted style=colorful,
+minted language=python,minted options={fontsize=\small,linenos,numbersep=3mm,firstnumber=last,
+breaklines,breakbytoken},
+colback=backColor,colframe=subColor,listing only,
+left=5mm,enhanced,sharp corners,boxrule=0pt,
+overlay={\begin{tcbclipinterior}\fill[subColor!30] (frame.south west)
+rectangle ([xshift=5mm]frame.north west);\end{tcbclipinterior}}}
+% environnement pour montrer un exemple de code
+\newtcblisting{pythonexemple}{listing engine=minted,minted style=colorful,
+minted language=python,minted options={fontsize=\small,linenos,numbersep=3mm,firstnumber=1,
+breaklines,breakbytoken},title=Code,fonttitle=\sffamily,coltitle=mainColor,
+colback=backColor,colframe=subColor!30,listing only,
+left=4mm,enhanced,sharp corners,boxrule=0pt,
+overlay={\begin{tcbclipinterior}\fill[subColor!30] (frame.south west)
+rectangle ([xshift=3mm]frame.north west);\end{tcbclipinterior}}}
+% environnement pour afficher ce que produit du code
+\newtcblisting{result}{listing engine=minted,minted style=colorful,
+minted language=text,minted options={fontsize=\small,
+breaklines,breakbytoken},
+colback=backColor,colframe=subColor!30,listing only,
+left=5mm,enhanced,sharp corners,boxrule=0pt,title=R\'{e}sultat,fonttitle=\sffamily,coltitle=mainColor}
+% boite pour reperer les mots cles
+%
+% modif Razik
+\makeatletter
+\newcommand{\motcle}[1]{%
+\tcbox[on line,colback=focusColor!5,colframe=focusColor!50,boxrule=0.5pt,arc=0pt,%
+left=1pt,right=1pt,top=1pt,bottom=1pt,boxsep=0pt]%
+{\texttt{#1}\index[cmd]{#1}}%
+}
+\makeatother
+\newtcbox{\touche}[1][black]{on line,fontupper=\sffamily,
+arc=3pt,outer arc=1pt,colback=#1!5,colframe=#1!50,
+boxsep=0pt,left=1pt,right=1pt,top=1pt,bottom=1pt,
+boxrule=0.5pt}
+
+
+%--- TIKZ
+\makeatletter
+% quelques styles pour les diagrammes, les boîtes, etc.
+\tikzset{%
+sticker/.style={
+	fill=#1!50,draw,thin, minimum height=0.4cm, minimum width=0.6cm,
+	decorate, decoration={random steps,segment length=3pt,amplitude=1pt}
+},
+% sticker/.style={tape, fill=#1!50, minimum width=8mm, tape bend height=1mm, inner sep=5pt},
+sticker/.default=mainColor,
+condition/.style={
+    diamond, draw=subColor, thick, fill=subColor!20, font=\ttfamily,
+    text width=5em, text badly centered, inner sep=1pt, rounded corners
+},
+block/.style={
+    rectangle, draw=subColor, thick, fill=subColor!20, font=\ttfamily,
+    text width=10em, text centered, minimum height=2em
+},
+connexion/.style={
+    draw, thick, ->, shorten >=2pt
+},%
+boite fermee/.style={
+	draw,minimum size=#1cm,
+	 append after command={
+        \pgfextra{
+        \coordinate (hg) at (\tikzlastnode.north west);
+        \coordinate (hd) at (\tikzlastnode.north east);
+        \coordinate (bg) at (\tikzlastnode.south west);
+        \coordinate (bd) at (\tikzlastnode.south east);
+        \coordinate (trans) at (45:0.6*#1);
+        \coordinate (bhg) at ($(hg)+(trans)$);
+        \coordinate (bhd) at ($(hd)+(trans)$);
+        \coordinate (bbd) at ($(bd)+(trans)$);
+        \coordinate (mhd) at ($(hd)!0.5!(bhd)$);
+        \coordinate (mhg) at ($(hg)!0.5!(bhg)$);
+        \draw (bd) -- (bbd) -- (bhd) -- (bhg) -- (hg);
+        \draw (hd) -- (bhd);
+        \draw (mhg) -- (mhd);
+        \node[sticker] at(\tikzlastnode.center) {};
+        }
+    }
+},
+boite fermee/.default=1,
+boite ouverte/.style={
+	draw,minimum size=#1cm,
+	 prefix after command={
+        \pgfextra{
+        \coordinate (hg) at (\tikzlastnode.north west);
+        \coordinate (hd) at (\tikzlastnode.north east);
+        \coordinate (bg) at (\tikzlastnode.south west);
+        \coordinate (bd) at (\tikzlastnode.south east);
+        \coordinate (trans) at (45:#1*0.6);
+        \coordinate (bhg) at ($(hg)+(trans)$);
+        \coordinate (bhd) at ($(hd)+(trans)$);
+        \coordinate (bbd) at ($(bd)+(trans)$);
+        \coordinate (mhd) at ($(hd)!0.5!(bhd)$);
+        \coordinate (mhg) at ($(hg)!0.5!(bhg)$);
+        \coordinate (ofg) at ($(hg)+(75:#1*0.4)$);
+        \coordinate (ofd) at ($(hd)+(75:#1*0.4)$);
+        \coordinate (obg) at ($(bhg)+(140:#1*0.3)$);
+        \coordinate (obd) at ($(bhd)+(140:#1*0.3)$);
+        \fill[black!50] (hg) -- (bhg) -- (bhd) -- (hd) -- cycle;
+        \draw[fill=white] (bhg) -- (obg) -- (obd) -- (bhd) -- cycle;
+        \draw (bd) -- (bbd) -- (bhd) -- (bhg) -- (hg);
+        \draw (hd) -- (bhd);
+        \draw[fill=white] (hd) -- (ofd) -- (ofg) -- (hg) -- cycle;
+        \node[sticker] at(\tikzlastnode.center) {};
+        \node[fit=(hg)(hd)(bg)(bd)(bhg)(bhd)(bbd)(mhd)(mhg)(ofg)(obg)(ofd)(obd)]{};
+        }
+    }
+},%
+boite ouverte/.default=1,
+}
+\makeatother
+% format des titres des legendes
+\renewcommand{\theFancyVerbLine}{\ttfamily \textcolor{mainColor}{\tiny {\arabic{FancyVerbLine}}}}
+% reglages des liens (couleurs, etc)
+\hypersetup{
+    colorlinks=true,
+    linkcolor=subColor,
+    filecolor=focusColor,
+    urlcolor=subColor,
+    pdftitle={Python -- Initiation pour un usage en Sciences},
+    pdfauthor={S. Chambon}
+}
+
+
+
+
+
+\begin{document}
+\input{/opt/tex/macros/macros_sylvain-2.tex}
+
+%----------------------------------------------------------------
+\setlength{\parindent}{0pt}
+\everymath{\displaystyle}
+
+
+%-------------------------------------------------------%
+% TITLE PAGE                                            %
+%-------------------------------------------------------%
+\printtitlepage{Python}{Initiation pour un usage en Sciences}
+
+%-------------------------------------------------------%
+% TABLE OF CONTENTS
+%-------------------------------------------------------%
+\pagestyle{empty} % No headers
+\tableofcontents % Print the table of contents
+\cleardoublepage
+\pagestyle{fancy} % Print headers again
+
+
+
+%-------------------------------------------------------%
+% CHAPTERS
+%-------------------------------------------------------%
+\pagestyle{fancy}
+% chemin absolu pour les dossiers du projets
+\newcommand*{\MyPath}{/home/sylcha/Dropbox/travail/programmation/2nde/python}
+% chemin images
+\graphicspath{{\MyPath/images/}}
+% integration des chapitres
+\input{\MyPath/chapitres/python_fonctions}
+\input{\MyPath/chapitres/python_variables}
+\input{\MyPath/chapitres/python_conditions}
+\input{\MyPath/chapitres/python_listes}
+\input{\MyPath/chapitres/python_caracteres}
+
+
+% -------------------------------------------------------%
+% APPENDICES
+% -------------------------------------------------------%
+\begin{appendix}
+\input{\MyPath/chapitres/python_complexes}
+\end{appendix}
+
+%-------------------------------------------------------%
+% INDEX
+%-------------------------------------------------------%
+\cleardoublepage
+\setlength{\columnsep}{0.75cm}
+\addcontentsline{toc}{chapter}{\textcolor{mainColor}{Index}}
+\printindex
+\indexprologue{On liste ici toutes les commandes, mots clés, fonctions, modules\dots\ }
+\printindex[cmd]
+
+
+
+\end{document}

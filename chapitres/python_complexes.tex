@@ -1,0 +1,205 @@
+% !TEX root = ../memo/python_memo.tex
+% !TEX encoding = UTF-8 Unicode
+% creation: 2015-10-09
+
+\chapter{Nombres complexes}
+
+Python sait calculer avec des nombres complexes. Nous allons voir dans cette partie comment.
+
+\section{Implémentation native}\label{python:complexes:natif}
+
+Sans librairie particulière, Python connait les nombres complexes et sait calculer avec.
+
+\subsection{Définition}\index{Complexes!Définition}
+On utilise la lettre \motcle{j} dans la définition du nombre à la place du $i$ utilisé
+en mathématiques\footnote{Les physiciens font de même.}. Par exemple, le nombre $3i$ s'ecrira
+\texttt{3j}.
+
+\begin{pythoncode}
+>>> a = 3j
+>>> type(a)
+<class 'complex'>
+\end{pythoncode}
+
+\begin{remarque}
+Attention~! \texttt{j} ne s'utilise pas tout seul. En effet, il pourrait être confondu avec
+la variable du même nom.
+\begin{pythoncode}
+>>> b = 3 + j
+Traceback (most recent call last):
+  File " <stdin> ", line 1, in <module>
+NameError: name 'j' is not defined
+>>> b = 3 + 1j
+\end{pythoncode}
+\end{remarque}
+
+
+\subsection{Parties réelles et imaginaires}
+On peut retoruver les parties réelles \index{Complexes!Réelle, Partie} et imaginaires
+\index{Complexes!Imaginaire, Partie} d'un nombre
+complexe~: Python les conçoit comme
+des \textit{attributs} du nombre complexe créé et les nomme \motcle{real} et \motcle{imag}~:
+\begin{pythoncode}
+>>> a = -2 + 5j
+>>> a.real
+-2.0
+>>> a.imag
+5.0
+\end{pythoncode}
+On peut aussi déterminer le \textit{conjugué}\index{Complexes!Conjugué} d'un nombre complexe à l'aide
+de la fonction \motcle{conjugate()}~:
+\begin{pythoncode}
+>>> a = -2 + 5j
+>>> a.conjugate()
+(-2-5j)
+\end{pythoncode}
+
+Pour déterminer le \textit{module} d'un nombre complexe\index{Complexes!Module} on utilise la fonction
+\motcle{abs()}~:
+
+\begin{pythoncode}
+>>> a = 1 + 1j
+>>> abs(a)
+1.4142135623730951
+\end{pythoncode}
+
+\begin{exercice}
+Vérifier sur des exemples que si $u=a +ib$ alors $|u|=\sqrt{a^2+b^2}$.
+\end{exercice}
+
+
+\subsection{Opérations}
+On peut effectuer les quatre opérations courantes~:
+
+\begin{pythoncode}
+>>> a = 3 - 2j
+>>> b = 3 + 1j
+>>> a + b
+(6-1j)
+>>> a - b
+-3j
+>>> a * b
+(11-3j)
+>>> a / b
+(0.7000000000000001-0.8999999999999999j)
+\end{pythoncode}
+
+\begin{remarque}
+Python effectue les conversions si besoin est~:
+\begin{pythoncode}
+>>> a = 3 - 2j
+>>> c = 4
+>>> type(a) ; type (c)
+<class 'complex'>
+<class 'int'>
+>>> a + c                # Pas d'erreur !
+(7-2j)
+\end{pythoncode}
+\end{remarque}
+
+\begin{exercice}
+Vérifier sur des exemples que si $u=a+ib$ et $v=c + id$ alors on a les formules suivantes~:
+\begin{align*}
+uv &= (ac - bd) + i(bc+ad)
+&
+\frac{u}{v} &= \frac{ac +bd}{c^2 + d^2} + i\frac{bc-ad}{c^2+d^2}
+\end{align*}
+\end{exercice}
+
+On peut aussi calculer des puissances avec ces nombres complexes~:
+\begin{pythoncode}
+>>> a = 3 - 2j
+>>> a ** 2
+(5-12j)
+\end{pythoncode}
+On peut tenter de trouver la racine carrée d'un puissance utilisant l'opérateur \texttt{**} mais
+on n'obtient qu'une des deux racines carrées~:
+\begin{pythoncode}
+>>> a ** 0.5
+(1.8173540210239707-0.5502505227003375j)
+\end{pythoncode}
+
+
+\section{Librairie \texttt{cmath}}
+L'utilisation de la librairie \motcle{cmath} est moins intuitive mais permet des calculs plus\dots\
+complexes~! On va surtout pouvoir accéder à la forme trigonométrique des nombres complexes.
+
+On charge la librairie \texttt{cmath} comme une librairie usuelle
+\footnote{elle est présente par défaut, par besoin d'installation supplémentaire}~:
+
+\begin{pythoncode}
+>>> import cmath
+\end{pythoncode}
+
+\subsection{Forme trigonométrique}
+
+Lorsqu'on a saisi un nombre complexe à l'aide de ce que nous avons vu section
+\ref{python:complexes:natif}  comme par exemple \texttt{a = 1 + 1j}, alors on va pouvoir grâce à la
+fonction \motcle{polar()} accéder à sa forme trigonométrique~: cette fonction renvoie
+le \textit{module} et l'\textit{argument} (en radian) correspondant.
+
+\begin{pythoncode}
+>>> a = 1 + 1j
+>>> cmath.polar(a)
+(1.4142135623730951, 0.7853981633974483)
+\end{pythoncode}
+
+On peut avoir accès directement au module et à l'argument à l'aide des fonctions
+\texttt{abs()} (déjà vu ci-dessus) et \motcle{phase()} \index{Complexes!Argument}~:
+
+\begin{pythoncode}
+>>> abs(a)
+1.4142135623730951                  # module
+>>> cmath.phase(a)
+0.7853981633974483                  # argument (en radians)
+>>> import math
+>>> math.degrees(cmath.phase(a))    # pour avoir l'argument en degrés
+45.0
+\end{pythoncode}
+
+On peut définir un nombre complexe à partir de son argument et de son module à l'aide de la fonction
+\motcle{rect()}.
+
+\begin{pythoncode}
+>>> cmath.rect(4, math.pi/3)
+(2.0000000000000004+3.4641016151377544j)
+\end{pythoncode}
+
+\subsection{Fonctions spécifiques}
+
+Le module \texttt{cmath} dispose d'un fonction racine carrée \motcle{sqrt()} plus évoluée que le module
+\texttt{math}.
+
+\begin{pythoncode}
+>>> math.sqrt(-3)
+Traceback (most recent call last):
+  File " <stdin> ", line 1, in <module>
+ValueError: math domain error                  # calcul impossible avec 'math'
+>>> cmath.sqrt(-3)
+1.7320508075688772j                            # pas de problème avec 'cmath'
+\end{pythoncode}
+
+Le module \texttt{cmath} dispose d'une exponentielle complexe. Un exemple avec $\E^{\pi i}=-1$~:
+\begin{pythoncode}
+>>> cmath.exp(cmath.pi*1j)
+(-1+1.2246467991473532e-16j)       # correct... à une approximation près !
+\end{pythoncode}
+
+On voit qu'on a un problème d'approximation dans les calculs. Le module \texttt{cmath} possède
+une fonction \motcle{isclose()} qui renvoie \texttt{True} si deux nombres sont proches l'un
+de l'autre. Cela est bien utilise pour les tests. On peut règler la tolérance à l'aide d'un argument
+supplémentaire (voir la documentation
+\footnote{\url{https://docs.python.org/3.5/library/cmath.html\#classification-functions}}
+pour plus d'informations).
+
+\begin{pythoncode}
+>>> a = cmath.exp(cmath.pi*1j)
+>>> cmath.isclose(a, -1)
+True
+>>> a == -1
+False
+\end{pythoncode}
+
+\begin{exercice}
+Vérifier sur des exemples que $\E^{ix}=\cos x + i \sin x$.
+\end{exercice}
