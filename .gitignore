@@ -36,3 +36,6 @@
 
 # Minted specific folders
 */_minted-*/
+
+# Mac OS X
+.DS_Store
